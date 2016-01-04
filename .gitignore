@@ -1,0 +1,8 @@
+app/vendor/*
+app/open/*
+composer.lock
+.idea/
+
+vendor/
+.develop/
+*.bat

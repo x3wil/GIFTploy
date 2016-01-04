@@ -1,0 +1,20 @@
+title: Silicone Skeleton
+hello.world: Hello Wolrd!
+
+form:
+    submit: Submit
+
+    repository:
+        title: Title
+        url: Repository URL
+        username: Login
+        password: Password
+        branch: Branch
+
+error:
+    404:
+        repository: Repository does not exist.
+
+register: Register
+login: Login
+logout: Logout

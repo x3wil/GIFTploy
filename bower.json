@@ -1,0 +1,22 @@
+{
+  "name": "GIFTploy",
+  "authors": [
+    "Patrik Chotěnovský <chotenovsky.patrik@gmail.com>"
+  ],
+  "description": "",
+  "main": "",
+  "moduleType": [],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "web/vendor/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "AdminLTE": "admin-lte#~2.3.2"
+  }
+}

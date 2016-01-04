@@ -1,0 +1,15 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    {{ 'hello.world'|trans() }} <small>Optional description</small>
+{% endblock %}
+
+{% block content %}
+    {% if app.isGranted('ROLE_USER') %}
+        {{ app.user.username }} - <a href="{{ url('logout') }}">{{ 'logout'|trans() }}</a>
+    {% else %}
+        <a href="{{ url('login') }}">{{ 'login'|trans() }}</a>
+        or
+        <a href="{{ url('register') }}">{{ 'register'|trans() }}</a>
+    {% endif %}
+{% endblock %}
