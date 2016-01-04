@@ -1,0 +1,38 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    {{ 'respository.add'|trans() }} <small>Optional description</small>
+{% endblock %}
+
+{% form_theme form 'Default/form.layout.bootstrap.twig' %}
+
+{% block content %}
+    <div class="row">
+        <div class="col-md-6 center-block">
+
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Quick Example</h3>
+                </div>
+
+                {{ form_start(form, { "attr": {"novalidate": "novalidate"} }) }}
+                    <div class="box-body">
+                        {{ form_row(form.title) }}
+                        {{ form_row(form.url) }}
+                        {{ form_row(form.username) }}
+                        {{ form_row(form.password) }}
+                        {{ form_row(form.branch) }}
+                    </div>
+
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">{{ 'form.submit'|trans() }}</button>
+                    </div>
+                {{ form_end(form) }}
+                
+            </div>
+
+        </div>
+
+        <div class="col-md-6"></div>
+    </div>
+{% endblock %}
