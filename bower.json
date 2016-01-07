@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "AdminLTE": "admin-lte#~2.3.2"
+    "AdminLTE": "admin-lte#~2.3.2",
+    "lesshat": "~3.0.2"
   }
 }
