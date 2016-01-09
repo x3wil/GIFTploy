@@ -17,7 +17,6 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  */
 class Repository
 {
-    const DIR_REPOSITORY = "repository/";
 
     /**
      * @var integer
@@ -112,11 +111,6 @@ class Repository
         return !((bool)$this->getId());
     }
 
-    public function getDirectory()
-    {
-        return __DIR__.'/../../'.self::DIR_REPOSITORY.$this->getId();
-    }
-    
     /**
      * Constructor
      */

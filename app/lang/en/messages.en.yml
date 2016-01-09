@@ -17,6 +17,7 @@ form:
 error:
     404:
         repository: Repository does not exist.
+        Environment: Environment does not exist.
 
 register: Register
 login: Login

@@ -14,24 +14,6 @@ class ProjectController extends Controller
 {
 
     /**
-     * @Route("/{id}", name="repository-show", requirements={"id"="\d+"})
-     */
-    public function show($id = null)
-    {
-        $repositoryObj = $this->app->entityManager()->getRepository('Entity\Repository')->find(intval($id));
-        
-        if (!$repositoryObj) {
-            $this->app->abort(404, $this->app->trans('error.404.repository'));
-        }
-
-//        ddd($repositoryObj->getDirectory());
-
-        return $this->render('Repository/show.twig', [
-            'repositoryObj' => $repositoryObj,
-        ]);
-    }
-
-    /**
      * @Route("/new-repository", name="repository-new")
      * @Route("/edit-repository/{id}", name="repository-edit", requirements={"id"="\d+"})
      */
@@ -105,6 +87,36 @@ class ProjectController extends Controller
 
         $response->setSharedMaxAge(5);
         return $response;
+    }
+
+    /**
+     * @Route("/{repositoryId}/environment/{environmentId}", name="environment-show", requirements={"repositoryId"="\d+", "environmentId"="\d+"})
+     */
+    public function showEnvironment($repositoryId, $environmentId)
+    {
+        $repositoryObj = $this->app->entityManager()->getRepository('Entity\Repository')->find(intval($repositoryId));
+        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+
+        if (!$repositoryObj) {
+            $this->app->abort(404, $this->app->trans('error.404.repository'));
+        }
+
+        if (!$environmentObj) {
+            $this->app->abort(404, $this->app->trans('error.404.environment'));
+        }
+
+        $gitDirectory = $this->app->getProjectsDir().$environmentObj->getDirectory();
+        $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+
+        if (!$gitRepository) {
+            Git::cloneRepository($gitDirectory, $repositoryObj->getUrl(), $environmentObj->getBranch());
+        }
+
+        return $this->render('Repository/show-environment.twig', [
+            'repositoryObj' => $repositoryObj,
+            'environmentObj' => $environmentObj,
+            'gitRepository' => $gitRepository,
+        ]);
     }
 
     /**

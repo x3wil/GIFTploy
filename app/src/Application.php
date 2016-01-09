@@ -87,4 +87,23 @@ class Application extends Silicone\Application
     {
         return $this['security.encoder_factory']->getEncoder($user)->encodePassword($password, $user->getSalt());
     }
+
+    /**
+     * Get projects directory.
+     * @return string
+     */
+    public function getProjectsDir()
+    {
+        static $dir;
+        
+        if (empty($dir)) {
+            $dir = $this->getRootDir().'/projects';
+
+            if (!is_dir($dir)) {
+                mkdir($dir, 0755, true);
+            }
+        }
+        
+        return $dir;
+    }
 }

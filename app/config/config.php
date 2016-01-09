@@ -1,6 +1,11 @@
 <?php
 /** @var $app Application */
 
+$app['settings'] = [
+    'git-binnary' => 'c:\Program Files (x86)\Git\bin\git.exe',
+    'process-timeout' => 3600,
+];
+
 $app['locale'] = 'en';
 
 // Router
@@ -119,3 +124,10 @@ $app->register(new Silex\Provider\SecurityServiceProvider(), array(
 $app->register(new Silex\Provider\RememberMeServiceProvider());
 $r = new \ReflectionClass('Symfony\Component\Security\Core\SecurityContext');
 $app['translator']->addResource('xliff', dirname($r->getFilename()).'/../Resources/translations/security.'.$app['locale'].'.xlf', $app['locale'], 'security');
+
+// Git configuration
+GIFTploy\Git\Git::setOptions([
+	"command" => $app['settings']['git-binnary'],
+	"environment_variables" => $_SERVER,
+	"process_timeout" => $app['settings']['process-timeout'],
+]);

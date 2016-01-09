@@ -245,4 +245,10 @@ class Environment
     {
         return $this->repository;
     }
+
+    public function getDirectory()
+    {
+        return '/'.$this->getRepository()->getId().'/'.$this->getId();
+    }
+
 }
