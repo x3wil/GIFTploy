@@ -29,7 +29,7 @@ class Repository
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="Environment", mappedBy="environment")
+     * @ORM\OneToMany(targetEntity="Environment", mappedBy="repository")
      */
     private $environments;
 

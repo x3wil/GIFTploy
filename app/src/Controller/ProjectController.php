@@ -38,18 +38,20 @@ class ProjectController extends Controller
     public function repositoryform($id = null)
     {
         $repositoryObj = $this->app->entityManager()->getRepository('Entity\Repository')->find(intval($id));
+
+        if (!$repositoryObj) {
+            $repositoryObj = new \Entity\Repository();
+            $repositoryObj->setEnabled(true);
+        }
+
         $form = $this->app->formType(new \Form\RepositoryFormType(), $repositoryObj);
-        
+
         if ($this->request->isMethod('POST')) {
             $form->bind($this->request);
 
             if ($form->isValid()) {
 
                 $repositoryObj = $form->getData();
-
-                if ($repositoryObj->isNew()) {
-                    $repositoryObj->setEnabled(true);
-                }
 
                 $this->app->entityManager()->persist($repositoryObj);
                 $this->app->entityManager()->flush();
@@ -78,6 +80,7 @@ class ProjectController extends Controller
         if (!$environmentObj) {
             $environmentObj = new \Entity\Environment();
             $environmentObj->setRepository($repositoryObj);
+            $environmentObj->setEnabled(true);
         }
 
         $form = $this->app->formType(new \Form\EnvironmentFormType(), $environmentObj);
@@ -88,10 +91,6 @@ class ProjectController extends Controller
             if ($form->isValid()) {
 
                 $environmentObj = $form->getData();
-
-                if ($environmentObj->isNew()) {
-                    $environmentObj->setEnabled(true);
-                }
 
                 $this->app->entityManager()->persist($environmentObj);
                 $this->app->entityManager()->flush();
