@@ -11,14 +11,12 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 /**
  * Repository
  *
- * @ORM\Table(name="repository")
- * @ORM\Entity(repositoryClass="Entity\RepositoryRepository")
+ * @ORM\Table(name="environment")
+ * @ORM\Entity(repositoryClass="Entity\EnvironmentRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class Repository
+class Environment
 {
-    const DIR_REPOSITORY = "repository/";
-
     /**
      * @var integer
      *
@@ -29,9 +27,11 @@ class Repository
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="Environment", mappedBy="environment")
+     * @ORM\ManyToOne(targetEntity="Repository", inversedBy="environments")
+     * @ORM\JoinColumn(name="repository_id", referencedColumnName="id")
+     * @Assert\NotBlank()
      */
-    private $environments;
+    private $repository;
 
     /**
      * @var string
@@ -45,24 +45,10 @@ class Repository
     /**
      * @var string
      *
-     * @ORM\Column(name="url", type="string", length=255)
+     * @ORM\Column(name="branch", type="string", length=255)
      * @Assert\NotBlank()
      */
-    private $url;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="username", type="string", length=255, nullable=true)
-     */
-    private $username;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="password", type="string", length=255, nullable=true)
-     */
-    private $password;
+    private $branch;
 
     /**
      * @var boolean
@@ -112,19 +98,6 @@ class Repository
         return !((bool)$this->getId());
     }
 
-    public function getDirectory()
-    {
-        return __DIR__.'/../../'.self::DIR_REPOSITORY.$this->getId();
-    }
-    
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->environments = new \Doctrine\Common\Collections\ArrayCollection();
-    }
-
     /**
      * Get id
      *
@@ -139,19 +112,19 @@ class Repository
      * Set title
      *
      * @param string $title
-     * @return Repository
+     * @return Environment
      */
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -159,79 +132,33 @@ class Repository
     }
 
     /**
-     * Set url
+     * Set branch
      *
-     * @param string $url
-     * @return Repository
+     * @param string $branch
+     * @return Environment
      */
-    public function setUrl($url)
+    public function setBranch($branch)
     {
-        $this->url = $url;
+        $this->branch = $branch;
     
         return $this;
     }
 
     /**
-     * Get url
+     * Get branch
      *
      * @return string 
      */
-    public function getUrl()
+    public function getBranch()
     {
-        return $this->url;
-    }
-
-    /**
-     * Set username
-     *
-     * @param string $username
-     * @return Repository
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    
-        return $this;
-    }
-
-    /**
-     * Get username
-     *
-     * @return string 
-     */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Set password
-     *
-     * @param string $password
-     * @return Repository
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    
-        return $this;
-    }
-
-    /**
-     * Get password
-     *
-     * @return string 
-     */
-    public function getPassword()
-    {
-        return $this->password;
+        return $this->branch;
     }
 
     /**
      * Set enabled
      *
      * @param boolean $enabled
-     * @return Repository
+     * @return Environment
      */
     public function setEnabled($enabled)
     {
@@ -254,7 +181,7 @@ class Repository
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return Repository
+     * @return Environment
      */
     public function setCreatedAt($createdAt)
     {
@@ -277,7 +204,7 @@ class Repository
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * @return Repository
+     * @return Environment
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -297,35 +224,25 @@ class Repository
     }
 
     /**
-     * Add environments
+     * Set repository
      *
-     * @param \Entity\Environment $environments
-     * @return Repository
+     * @param \Entity\Repository $repository
+     * @return Environment
      */
-    public function addEnvironment(\TestBundle\Entity\Environment $environments)
+    public function setRepository(\Entity\Repository $repository = null)
     {
-        $this->environments[] = $environments;
+        $this->repository = $repository;
     
         return $this;
     }
 
     /**
-     * Remove environments
+     * Get repository
      *
-     * @param \Entity\Environment $environments
+     * @return \Entity\Repository 
      */
-    public function removeEnvironment(\TestBundle\Entity\Environment $environments)
+    public function getRepository()
     {
-        $this->environments->removeElement($environments);
-    }
-
-    /**
-     * Get environments
-     *
-     * @return \Doctrine\Common\Collections\Collection 
-     */
-    public function getEnvironments()
-    {
-        return $this->environments;
+        return $this->repository;
     }
 }

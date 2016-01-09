@@ -17,7 +17,7 @@ class RepositoryFormType extends AbstractType
         $builder
             ->add('title', null, ['label' => 'form.repository.title', 'attr' => ['placeholder' => 'form.repository.title']])
             ->add('url', null, ['label' => 'form.repository.url', 'attr' => ['placeholder' => 'form.repository.url']])
-            ->add('branch', null, ['label' => 'form.repository.branch', 'attr' => ['placeholder' => 'form.repository.branch']])
+//            ->add('branch', null, ['label' => 'form.repository.branch', 'attr' => ['placeholder' => 'form.repository.branch']])
             ->add('username', null, ['label' => 'form.repository.username', 'attr' => ['placeholder' => 'form.repository.username']])
             ->add('password', Type\PasswordType::class, ['label' => 'form.repository.password', 'attr' => ['placeholder' => 'form.repository.password']]);
     }

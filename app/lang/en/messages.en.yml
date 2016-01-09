@@ -9,6 +9,9 @@ form:
         url: Repository URL
         username: Login
         password: Password
+
+    environment:
+        title: Title
         branch: Branch
 
 error:
