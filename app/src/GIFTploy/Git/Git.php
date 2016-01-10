@@ -34,8 +34,7 @@ class Git
             throw new RuntimeException(sprintf('Error while initializing repository: %s', $process->getErrorOutput()));
         }
 
-        return $process;
-//        return new Repository($path, $options);
+        return new Repository($path);
     }
 
     public static function setOptions(array $options)
@@ -47,11 +46,10 @@ class Git
         self::$options = array_merge(self::$options, $options);
     }
 
-    protected static function getProcess($command, array $args = [], array $options = [])
+    public static function getProcess($command, array $args = [], array $options = [])
     {
         $options = array_merge($options, self::$options);
-
-        $builder = \Symfony\Component\Process\ProcessBuilder::create(array_merge(array($options["command"], $command), $args));
+        $builder = \Symfony\Component\Process\ProcessBuilder::create(array_merge([$options["command"]], $command, $args));
         $builder->inheritEnvironmentVariables(false);
 
         $process = $builder->getProcess();
@@ -69,29 +67,14 @@ class Git
         }
 
         $process = self::getProcess($command, $args, $options);
+        
+        return self::runProcess($process);
+    }
 
-        $callback = !$processConsole ? null : function($type, $buffer) use ($processConsole) {
-            ob_clean();
-
-            while (ob_get_level()) {
-                ob_end_flush();
-            }
-
-            ob_start();
-
-            if (\Symfony\Component\Process\Process::ERR === $type) {
-                $processConsole->flushProgress($buffer, false);
-            } else {
-                $processConsole->flushProgress($buffer, true);
-            }
-
-            ob_flush();
-            flush();
-        };
-
-        $process->run($callback);
+    public static function runProcess(\Symfony\Component\Process\Process $process)
+    {
+        $process->run();
 
         return $process;
     }
-
 }

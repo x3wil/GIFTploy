@@ -23,4 +23,22 @@ class Repository
         $this->dir = $dir;
     }
 
+    public function run($command, array $args = [])
+    {
+        $baseCommand = [
+            '--git-dir',
+            $this->dir.'/.git',
+            '--work-tree',
+            $this->dir,
+        ];
+        
+        $process = Git::getProcess(array_merge($baseCommand, [$command]), $args);
+
+        return Git::runProcess($process);
+    }
+
+    public function getLog()
+    {
+        return new Log($this);
+    }
 }
