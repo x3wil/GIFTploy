@@ -105,18 +105,34 @@ class ProjectController extends Controller
             $this->app->abort(404, $this->app->trans('error.404.environment'));
         }
 
-        $gitDirectory = $this->app->getProjectsDir().$environmentObj->getDirectory();
+        $directory = $this->app->getProjectsDir().$environmentObj->getDirectory();
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
         if (!$gitRepository) {
-            Git::cloneRepository($gitDirectory, $repositoryObj->getUrl(), $environmentObj->getBranch());
+            Git::cloneRepository($directory, $repositoryObj->getUrl(), $environmentObj->getBranch());
         }
-
+        
         return $this->render('Repository/show-environment.twig', [
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
             'gitRepository' => $gitRepository,
+            'commits' => $gitRepository->getLog()->getCommits(),
         ]);
+    }
+
+    /**
+     * @Route("/commit-detail/{environmentId}/{commitHash}", name="environment-commit-detail", requirements={"environmentId"="\d+"})
+     */
+    public function showCommitDetail($environmentId, $commitHash)
+    {
+        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+
+        $response = $this->render('Repository/_show-commit-detail.twig', [
+            'commit' => $gitRepository->getCommit($commitHash),
+        ]);
+        
+        return $this->app->json(['html' => $response->getContent()]);
     }
 
     /**

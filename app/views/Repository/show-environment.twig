@@ -7,4 +7,42 @@
 
 {% block content %}
 
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box" id="commits-list" data-environment-id="{{ environmentObj.getId() }}">
+                <div class="box-body">
+                    <table class="table table-condensed table-hover">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th>Date</th>
+                                <th>Author</th>
+                                <th>Commit</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for commit in commits %}
+                                <tr data-commit-hash="{{ commit.getCommitHash() }}">
+                                    <td>{{ commit.getMessage() }}</td>
+                                    <td data-sort="{{ commit.getDateTimestamp() }}">{{ commit.getDate()|raw }}</td>
+                                    <td>{{ commit.getAuthorName()|raw }}</td>
+                                    <td><span class="commit-hash">{{ commit.getCommitHashAbbrev() }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="col-md-6" id="commit-files">
+                <div class="box">
+                    <div class="box-body">
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
 {% endblock %}

@@ -1,0 +1,54 @@
+@import "../vendor/lesshat/build/lesshat-prefixed.less";
+
+.commit-hash {
+    font-family: 'Courier New';
+    /*font-size: 12px;*/
+}
+
+.boxOverflow {
+    min-height: 200px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+#commits-list {
+    .boxOverflow;
+    margin-bottom: 10px;
+
+    table {
+        tr {
+            cursor: pointer;
+
+            td, th {
+                padding: 5px 8px;
+            }
+        }
+    }
+}
+
+#commit-files {
+    .boxOverflow;
+    padding: 0;
+
+    .box {
+        margin-bottom: 0;
+
+        table td {
+            .file-ico {
+                display: inline-block;
+                margin-right: 5px;
+
+                &.delete {
+                    color: #DB4A39;
+                }
+                &.create {
+                    color: #5CB85C;
+                }
+                &.modify {
+                    color: #F0AD4E;
+                }
+            }
+        }
+    }
+}
+

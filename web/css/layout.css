@@ -1,0 +1,45 @@
+.commit-hash {
+  font-family: 'Courier New';
+  /*font-size: 12px;*/
+}
+.boxOverflow {
+  min-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+#commits-list {
+  min-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  margin-bottom: 10px;
+}
+#commits-list table tr {
+  cursor: pointer;
+}
+#commits-list table tr td,
+#commits-list table tr th {
+  padding: 5px 8px;
+}
+#commit-files {
+  min-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 0;
+}
+#commit-files .box {
+  margin-bottom: 0;
+}
+#commit-files .box table td .file-ico {
+  display: inline-block;
+  margin-right: 5px;
+}
+#commit-files .box table td .file-ico.delete {
+  color: #DB4A39;
+}
+#commit-files .box table td .file-ico.create {
+  color: #5CB85C;
+}
+#commit-files .box table td .file-ico.modify {
+  color: #F0AD4E;
+}
+/*# sourceMappingURL=layout.css.map */
