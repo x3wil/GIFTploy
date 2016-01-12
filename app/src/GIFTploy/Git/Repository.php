@@ -6,6 +6,7 @@ class Repository
 {
 
     protected $dir;
+    protected $commits = [];
 
     public function __construct($dir)
     {
@@ -40,5 +41,10 @@ class Repository
     public function getLog()
     {
         return new Log($this);
+    }
+
+    public function getCommit($commitHash)
+    {
+        return isset($this->commits[$commitHash]) ? $this->commits[$commitHash] : new Commit($this, $commitHash);
     }
 }

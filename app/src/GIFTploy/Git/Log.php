@@ -43,13 +43,26 @@ class Log
         return (int)$this->offset;
     }
 
-    public function getCommits()
+    public function getCommitData($commitHash)
     {
         $args = [
-			'--numstat',
-			'--summary',
-			'--pretty=format:COMMITSTART%H%n%h%n%P%n%aN%n%ae%n%ct%n%s%n%b%nENDOFOUTPUTGITMESSAGE',
+            $commitHash,
+            '-1',
         ];
+
+        $logParser = $this->getParserOutput($args);
+
+        return $logParser->parse()->current();
+    }
+
+    public function getCommit($commitHash)
+    {
+        return new Commit($this->repository, $commitHash, $this->getCommitData($commitHash));
+    }
+
+    public function getCommits()
+    {
+        $args = [];
 
         if ($this->getLimit() > 0) {
             $args[] = '-'.($this->getLimit());
@@ -59,15 +72,27 @@ class Log
             $args[] = '--skip='.$this->getOffset();
         }
 
-		$logRaw = $this->repository->run('log', $args);
-
-        $logParser = new LogParser($logRaw->getOutput());
+        $logParser = $this->getParserOutput($args);
 
         $commits = [];
-        foreach ((array)$logParser->parse() as $commit) {
+        foreach ($logParser->parse() as $commit) {
             $commits[] = new Commit($this->getRepository(), $commit['commitHash'], $commit);
         }
 
         return $commits;
     }
+
+    protected function getParserOutput(array $args = [])
+    {
+        $logArgs = array_merge([
+			'--numstat',
+			'--summary',
+			'--pretty=format:COMMITSTART%H%n%h%n%P%n%aN%n%ae%n%ct%n%s%n%b%nENDOFOUTPUTGITMESSAGE',
+        ], $args);
+
+		$logRaw = $this->repository->run('log', $logArgs);
+
+        return new LogParser($logRaw->getOutput());
+    }
+
 }

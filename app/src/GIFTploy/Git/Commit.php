@@ -24,9 +24,11 @@ class Commit
         $this->repository = $repository;
         $this->commitHash = $commitHash;
 
-        if (!empty($data)) {
-            $this->setData($data);
+        if (empty($data)) {
+            $data = $this->repository->getLog()->getCommitData($commitHash);
         }
+
+        $this->setData($data);
     }
 
     protected function setData(array $data)

@@ -27,10 +27,8 @@ class LogParser
                 continue;
             }
 
-            $this->data[] = $this->parseCommitLog($rawCommitLog);
+            yield $this->parseCommitLog($rawCommitLog);
         }
-
-        return $this->data;
     }
 
     protected function parseCommitLog($rawCommitLog)

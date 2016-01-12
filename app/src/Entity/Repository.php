@@ -296,7 +296,7 @@ class Repository
      * @param \Entity\Environment $environments
      * @return Repository
      */
-    public function addEnvironment(\TestBundle\Entity\Environment $environments)
+    public function addEnvironment(\Entity\Environment $environments)
     {
         $this->environments[] = $environments;
     
@@ -308,7 +308,7 @@ class Repository
      *
      * @param \Entity\Environment $environments
      */
-    public function removeEnvironment(\TestBundle\Entity\Environment $environments)
+    public function removeEnvironment(\Entity\Environment $environments)
     {
         $this->environments->removeElement($environments);
     }
