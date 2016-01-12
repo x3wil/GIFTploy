@@ -1,9 +1,9 @@
 <?php
 /** @var $app Application */
 
-require_once __DIR__ . '/config.php';
-
 $app['debug'] = true;
+
+require_once __DIR__ . '/config.php';
 
 // Console
 $app['console'] = $app->protect(function (\Symfony\Component\Console\Application $console) use ($app) {
