@@ -109,9 +109,9 @@ class ProjectController extends Controller
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
         if (!$gitRepository) {
-            Git::cloneRepository($directory, $repositoryObj->getUrl(), $environmentObj->getBranch());
+            $gitRepository = Git::cloneRepository($directory, $repositoryObj->getUrl(), $environmentObj->getBranch());
         }
-        
+
         return $this->render('Repository/show-environment.twig', [
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
@@ -120,19 +120,11 @@ class ProjectController extends Controller
         ]);
     }
 
-    /**
-     * @Route("/commit-detail/{environmentId}/{commitHash}", name="environment-commit-detail", requirements={"environmentId"="\d+"})
-     */
-    public function showCommitDetail($environmentId, $commitHash)
+    public function showCommitDetail(\GIFTploy\Git\Commit $commit)
     {
-        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
-        $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
-
-        $response = $this->render('Repository/_show-commit-detail.twig', [
-            'commit' => $gitRepository->getCommit($commitHash),
+        return $this->render('Repository/_show-commit-detail.twig', [
+            'commit' => $commit,
         ]);
-        
-        return $this->app->json(['html' => $response->getContent()]);
     }
 
     /**

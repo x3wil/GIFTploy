@@ -24,28 +24,42 @@
                                 <th>Commit</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="commit-list-body">
                             {% for commit in commits %}
-                                <tr data-commit-hash="{{ commit.getCommitHash() }}">
-                                    <td>{{ commit.getMessage() }}</td>
-                                    <td data-sort="{{ commit.getDateTimestamp() }}">{{ commit.getDate()|raw }}</td>
-                                    <td>{{ commit.getAuthorName()|raw }}</td>
-                                    <td><span class="commit-hash">{{ commit.getCommitHashAbbrev() }}</span></td>
-                                </tr>
+                                {% spaceless %}
+                                    <tr data-commit-hash="{{ commit.getCommitHash() }}">
+                                        <td>{{ commit.getMessage() }}</td>
+                                        <td data-sort="{{ commit.getDateTimestamp() }}">{{ commit.getDate()|raw }}</td>
+                                        <td>{{ commit.getAuthorName()|raw }}</td>
+                                        <td><span class="commit-hash">{{ commit.getCommitHashAbbrev() }}</span></td>
+                                    </tr>
+                                {% endspaceless %}
                             {% endfor %}
                         </tbody>
                     </table>
                 </div>
             </div>
+        </div>
 
-            <div class="col-md-6" id="commit-files">
-                <div class="box">
-                    <div class="box-body">
+        <div class="col-md-4" id="commit-files">
+            <div class="nav-tabs-custom">
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#tab-commit-files" data-toggle="tab">Commit Files</a></li>
+                    <li><a href="#tab-diff" data-toggle="tab">Diff to last deploy</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div class="active tab-pane" id="tab-commit-files">
+                        {% for commit in commits %}
+                            <div class="commit-detail" id="commit-{{ commit.getCommitHash() }}">
+                                {{ app.twig.render('Repository/_show-commit-detail.twig', {'commit': commit})|raw }}
+                            </div>
+                        {% endfor %}
+                    </div>
 
+                    <div class="tab-pane" id="tab-diff">
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 

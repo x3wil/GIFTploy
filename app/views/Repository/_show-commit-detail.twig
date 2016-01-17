@@ -1,26 +1,27 @@
-{% spaceless %}<strong>Commit:</strong> <span class="commit-hash">{{ commit.getCommitHash() }} [{{ commit.getCommitHashAbbrev() }}]</span><br />
+{% spaceless %}
+<strong>Commit:</strong> <span class="commit-hash">{{ commit.getCommitHash() }} [{{ commit.getCommitHashAbbrev() }}]</span><br />
 <br />
 {{ commit.getMessage() }}<br />
 <br />
 <table class="table table-condensed">
     <tbody>
-        {% for type, files in commit.getFiles() %}
-            {% for file in files %}
+        {%- for type, files in commit.getFiles() %}
+            {%- for file in files %}
                 <tr>
                     <td>
-                        {% if type == 'create' %}
+                        {%- if type == 'create' %}
                             <span class="file-ico {{ type }} fa fa-plus-square"></span>
-                        {% elseif type == 'delete' %}
+                        {%- elseif type == 'delete' %}
                             <span class="file-ico {{ type }} fa fa-minus-square"></span>
-                        {% else %}
+                        {%- else %}
                             <span class="file-ico {{ type }} fa fa-pencil-square"></span>
-                        {% endif %}
+                        {%- endif %}
 
-                        {{ file }}
+                        {{- file }}
                     </td>
                 </tr>
-            {% endfor %}
-        {% endfor %}
+            {%- endfor %}
+        {%- endfor %}
     </tbody>
 </table>
 {% endspaceless %}

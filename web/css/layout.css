@@ -1,45 +1,76 @@
-.commit-hash {
+.content-header {
+  width: 100%;
+  float: left;
+}
+.content-header > h1 {
+  float: left;
+  margin-bottom: 15px;
+}
+.content-header .header-side {
+  float: right;
+}
+.content-header .header-side a.btn .fa {
+  margin-right: 8px;
+}
+.content-header .header-side .server-switch {
+  margin-bottom: 0;
+}
+.content-header .header-side .server-switch .box-header {
+  padding: 10px 39px 10px 10px;
+}
+.content-header .header-side .server-switch .box-header .box-title {
+  font-size: 14px;
+}
+.content .commit-hash {
   font-family: 'Courier New';
   /*font-size: 12px;*/
 }
-.boxOverflow {
+.content .boxOverflow {
   min-height: 200px;
   overflow-y: auto;
   overflow-x: hidden;
 }
-#commits-list {
-  min-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  margin-bottom: 10px;
-}
-#commits-list table tr {
-  cursor: pointer;
-}
-#commits-list table tr td,
-#commits-list table tr th {
-  padding: 5px 8px;
-}
-#commit-files {
-  min-height: 200px;
-  overflow-y: auto;
-  overflow-x: hidden;
-  padding: 0;
-}
-#commit-files .box {
+.content #commits-list > .box {
   margin-bottom: 0;
 }
-#commit-files .box table td .file-ico {
+.content #commits-list table tr {
+  cursor: pointer;
+}
+.content #commits-list table tr td,
+.content #commits-list table tr th {
+  padding: 5px 8px;
+}
+.content.show-files #commits-list {
+  margin-bottom: 10px;
+}
+.content #commit-files {
+  padding-left: 0;
+}
+.content #commit-files .nav-tabs-custom {
+  margin-bottom: 0;
+}
+.content #commit-files .tab-content {
+  min-height: 200px;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.content #commit-files .tab-content .commit-detail {
+  display: none;
+}
+.content #commit-files table td .file-ico {
   display: inline-block;
   margin-right: 5px;
 }
-#commit-files .box table td .file-ico.delete {
+.content #commit-files table td .file-ico.delete {
   color: #DB4A39;
 }
-#commit-files .box table td .file-ico.create {
+.content #commit-files table td .file-ico.create {
   color: #5CB85C;
 }
-#commit-files .box table td .file-ico.modify {
+.content #commit-files table td .file-ico.modify {
   color: #F0AD4E;
+}
+.content.show-files #commit-files {
+  display: block;
 }
 /*# sourceMappingURL=layout.css.map */

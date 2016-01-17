@@ -66,7 +66,7 @@ class Git
             $args[] = "--progress";
         }
 
-        $process = self::getProcess($command, $args, $options);
+        $process = self::getProcess([$command], $args, $options);
         
         return self::runProcess($process);
     }

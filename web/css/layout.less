@@ -1,37 +1,83 @@
 @import "../vendor/lesshat/build/lesshat-prefixed.less";
 
-.commit-hash {
-    font-family: 'Courier New';
-    /*font-size: 12px;*/
-}
+.content-header {
 
-.boxOverflow {
-    min-height: 200px;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
+    width: 100%;
+    float: left;
 
-#commits-list {
-    .boxOverflow;
-    margin-bottom: 10px;
+    & > h1 {
+        float: left;
+        margin-bottom: 15px;
+    }
 
-    table {
-        tr {
-            cursor: pointer;
+    .header-side {
+        float: right;
 
-            td, th {
-                padding: 5px 8px;
+        a.btn .fa {
+            margin-right: 8px;
+        }
+
+        .server-switch {
+            margin-bottom: 0;
+
+            .box-header {
+                padding: 10px 39px 10px 10px;
+
+                .box-title {
+                    font-size: 14px;
+                }
             }
         }
     }
+
 }
 
-#commit-files {
-    .boxOverflow;
-    padding: 0;
+.content {
+    .commit-hash {
+        font-family: 'Courier New';
+        /*font-size: 12px;*/
+    }
 
-    .box {
-        margin-bottom: 0;
+    .boxOverflow {
+        min-height: 200px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+
+    #commits-list {
+        & > .box {
+            margin-bottom: 0;
+        }
+
+        table {
+            tr {
+                cursor: pointer;
+
+                td, th {
+                    padding: 5px 8px;
+                }
+            }
+        }
+    }
+    
+    &.show-files #commits-list {
+        margin-bottom: 10px;
+    }
+
+    #commit-files {
+        padding-left: 0;
+
+        .nav-tabs-custom {
+            margin-bottom: 0;
+        }
+
+        .tab-content {
+            .boxOverflow;
+
+            .commit-detail {
+                display: none;
+            }
+        }
 
         table td {
             .file-ico {
@@ -50,5 +96,8 @@
             }
         }
     }
-}
 
+    &.show-files #commit-files {
+        display: block;
+    }
+}

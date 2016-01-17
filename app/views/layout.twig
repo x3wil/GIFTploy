@@ -9,7 +9,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
         <link rel="stylesheet" href="/vendor/AdminLTE/plugins/datatables/dataTables.bootstrap.css">
-        <link rel="stylesheet" href="/vendor/AdminLTE/dist/css/AdminLTE.min.css">
+        <link rel="stylesheet" href="/css/admin-lte.css">
         <link rel="stylesheet" href="/vendor/AdminLTE/dist/css/skins/skin-blue.min.css">
         <link rel="stylesheet" href="/css/layout.css">
 
@@ -86,10 +86,17 @@
 
             <div class="content-wrapper">
                 {% set blockTitle = block('title') %}
+                {% set blockHeaderSide = block('headerSide') %}
+
                 {% if blockTitle is not empty %}
                     <section class="content-header">
                         <h1>{{ blockTitle|raw }}</h1>
+
+                        {% if blockHeaderSide is not empty %}
+                            <div class="header-side">{{ blockHeaderSide|raw }}</div>
+                        {% endif %}
                     </section>
+                    <div class="clearfix"></div>
                 {% endif %}
 
                 <section class="content">

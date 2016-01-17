@@ -3,7 +3,8 @@
  */
 (function($)
 {
-    $('#commits-list table').DataTable({
+    window.$commitListTable = $('#commits-list table');
+    window.$commitListTable.DataTable({
         'info': false,
         'paging': true,
         'pageLength': 50,
@@ -11,6 +12,8 @@
         'searching': false,
         'ordering': true,
         'autoWidth': false,
+        'scrollY': 200,
+        'scrollCollapse': true,
         'columns': [
             { 'orderable': false },
             { 'width': '5%' },
@@ -31,44 +34,54 @@
     window.contentHeader = $('.content-header', window.contentWrapper);
     window.content = $('.content', window.contentWrapper);
 
-    var neg = $('.main-header').outerHeight() + $('.main-footer').outerHeight();
-    
     var commitsList = $('#commits-list');
     var commitFiles = $('#commit-files');
-    var commitFilesBox = $('.box-body', commitFiles);
+    var commitFilesBody = $('.tab-content', commitFiles);
+    var dataTableBody = $('.dataTables_scrollBody', commitsList);
+    var neq = 0
+    neq += $('.main-header').outerHeight();
+    neq += $('.main-footer').outerHeight();
+    neq += window.contentHeader.outerHeight();
+    neq += (parseInt(window.content.css('padding-top')) + parseInt(window.content.css('padding-bottom')));
+    neq += (commitsList.height() - dataTableBody.height());
 
     var setBoxHeight = function() {
-        var innerContentHeight = $(window).height() - neg - window.contentHeader.outerHeight();
-        innerContentHeight -= (parseInt(window.content.css('padding-top')) + parseInt(window.content.css('padding-bottom')))
-        
-        commitsList.height((innerContentHeight / 2) - parseInt(commitsList.css('margin-bottom')));
-        commitFiles.height((innerContentHeight / 2) - 8);
-    }
+        dataTableBody.height($(window).height() - neq);
+        commitFilesBody.height(commitsList.height() -64);
+    };
 
     setBoxHeight();
 
-    $(window).resize(function(){
+    $(window).resize(function() {
         setBoxHeight();
     });
 
-    var ajax = new Ajax();
-    var tableRows = $('tr', commitsList);
+    var tableRows = $('tbody tr', commitsList);
+    var actualCommitList = null;
 
-    tableRows.click(function() {
+    window.$commitListTable.on('draw.dt', function () {
+        setBoxHeight();
+        tableRows = $('tbody tr', commitsList);
+    });
 
-        ajax.abort();
+    commitsList.on('click', 'tbody tr', function() {
+        
         var row = $(this);
 
-        if (row.hasClass('info')) {
-            row.removeClass('info');
-        } else {
+        if (!row.hasClass('info')) {
             tableRows.removeClass('info');
             row.addClass('info');
 
-            ajax.loadContent('/project/commit-detail/'+ commitsList.data('environment-id') +'/'+ row.data('commit-hash'), [], commitFilesBox);
+            if (actualCommitList !== null) {
+                actualCommitList.hide();
+            }
+
+            actualCommitList = $('#commit-' + row.data('commit-hash')).show();
         }
 
     });
+    
+    tableRows.first().trigger('click');
 
 }(jQuery));
 
