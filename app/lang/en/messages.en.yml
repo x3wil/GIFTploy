@@ -14,6 +14,18 @@ form:
         title: Title
         branch: Branch
 
+    server:
+        ftp:
+            title: Title
+            host: Host
+            port: Port
+            path: Destination path
+            pathExample: e.g. /var/www/html
+            username: Login
+            password: Password
+            passive: Passive mode
+            timeout: Timeout
+
 error:
     404:
         repository: Repository does not exist.

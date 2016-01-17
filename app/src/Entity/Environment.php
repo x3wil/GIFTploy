@@ -34,6 +34,11 @@ class Environment
     private $repository;
 
     /**
+     * @ORM\OneToMany(targetEntity="Server", mappedBy="environment")
+     */
+    private $servers;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -86,6 +91,14 @@ class Environment
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->createdAt = new \DateTime();
+    }
+
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->servers = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     public function __toString()
@@ -244,6 +257,39 @@ class Environment
     public function getRepository()
     {
         return $this->repository;
+    }
+
+    /**
+     * Add servers
+     *
+     * @param \Entity\Server $servers
+     * @return Environment
+     */
+    public function addServer(\Entity\Server $servers)
+    {
+        $this->servers[] = $servers;
+
+        return $this;
+    }
+
+    /**
+     * Remove servers
+     *
+     * @param \Entity\Server $servers
+     */
+    public function removeServer(\Entity\Server $servers)
+    {
+        $this->servers->removeElement($servers);
+    }
+
+    /**
+     * Get servers
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getServers()
+    {
+        return $this->servers;
     }
 
     public function getDirectory()

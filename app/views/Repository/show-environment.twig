@@ -4,12 +4,16 @@
     {{ environmentObj.getTitle() }} <small>[{{ environmentObj.getBranch() }}]</small>
 {% endblock %}
 
+{% block headerSide %}
+    <a href="{{ url('server-ftp-new', {'environmentId': environmentObj.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i>Add server</a>
+{% endblock %}
+
 
 {% block content %}
 
     <div class="row">
-        <div class="col-md-12">
-            <div class="box" id="commits-list" data-environment-id="{{ environmentObj.getId() }}">
+        <div class="col-md-8" id="commits-list">
+            <div class="box" data-environment-id="{{ environmentObj.getId() }}">
                 <div class="box-body">
                     <table class="table table-condensed table-hover">
                         <thead>
