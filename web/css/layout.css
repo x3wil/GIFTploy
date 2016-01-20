@@ -1,3 +1,16 @@
+.main-header .logo .logo-icon {
+  display: inline-block;
+  width: 27px;
+  height: 27px;
+  margin: 0 8px 0 0;
+  font-size: 20px;
+  line-height: 27px;
+  background-color: #DB4A39;
+  border-radius: 4px;
+}
+.main-header .logo .fa {
+  margin-right: 8px;
+}
 .content-header {
   width: 100%;
   float: left;

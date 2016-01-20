@@ -2,23 +2,59 @@
 
 namespace GIFTploy\Git;
 
+/**
+ * Class for set up and return parsed log.
+ *
+ * @author Patrik Chotěnovský
+ */
 class Log
 {
-
+    /**
+     * Instance of Repository.
+     *
+     * @var Repository
+     */
     protected $repository;
+
+    /**
+     * Commits limit from log.
+     *
+     * @var integer
+     */
     protected $limit = 0;
+
+    /**
+     * Numerical offset.
+     *
+     * @var integer
+     */
     protected $offset = 0;
 
+    /**
+     * @param Repository $respository
+     */
     public function __construct(Repository $respository)
     {
         $this->repository = $respository;
     }
 
+    /**
+     * Returns Repository
+     *
+     * @return Repository
+     */
     public function getRepository()
     {
         return $this->repository;
     }
 
+    /**
+     * Sets log limit.
+     *
+     * @param integer $limit
+     * 
+     * @return Log
+     */
     public function setLimit($limit)
     {
         $this->limit = $limit;
@@ -26,11 +62,23 @@ class Log
         return $this;
     }
 
+    /**
+     * Returns configured log limit.
+     *
+     * @return integer
+     */
     public function getLimit()
     {
         return (int)$this->limit;
     }
 
+    /**
+     * Sets numerical log offset.
+     *
+     * @param integer $offset
+     *
+     * @return Log
+     */
     public function setOffset($offset)
     {
         $this->offset = $offset;
@@ -38,11 +86,23 @@ class Log
         return $this;
     }
 
+    /**
+     * Returns configured log offset.
+     *
+     * @return integer
+     */
     public function getOffset()
     {
         return (int)$this->offset;
     }
 
+    /**
+     * Returns commit data for single commit from log.
+     *
+     * @param string $commitHash    Commit hash
+     * 
+     * @return array
+     */
     public function getCommitData($commitHash)
     {
         $args = [
@@ -55,11 +115,23 @@ class Log
         return $logParser->parse()->current();
     }
 
+    /**
+     * Returns single instance of Commit from log.
+     *
+     * @param string $commitHash    Commit hash
+     *
+     * @return Commit
+     */
     public function getCommit($commitHash)
     {
         return new Commit($this->repository, $commitHash, $this->getCommitData($commitHash));
     }
 
+    /**
+     * Returns array of Commit instances based on setted limit and offset.
+     *
+     * @return array
+     */
     public function getCommits()
     {
         $args = [];
@@ -82,6 +154,12 @@ class Log
         return $commits;
     }
 
+    /**
+     * Prepare and run process for log command and returns instance of LogParser.
+     *
+     * @param array $args   Additional arguments for log command.
+     * @return LogParser
+     */
     protected function getParserOutput(array $args = [])
     {
         $logArgs = array_merge([

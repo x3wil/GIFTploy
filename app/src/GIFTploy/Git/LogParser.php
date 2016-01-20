@@ -3,20 +3,34 @@
 namespace GIFTploy\Git;
 
 /**
- * Description of LogParser
+ * Class for parsing raw log output.
  *
- * @author Pat
+ * @author Patrik Chotěnovský
  */
 class LogParser
 {
+    /**
+     * Raw log output.
+     *
+     * @var string
+     */
     protected $log;
-    protected $data = [];
 
+    /**
+     * Sets a raw log.
+     *
+     * @param type $rawLog
+     */
     public function __construct($rawLog)
     {
         $this->log = $rawLog;
     }
 
+    /**
+     * Explode raw log by commits and returns by a single commit data.
+     *
+     * @return Generator
+     */
     public function parse()
     {
         $logByCommits = explode('COMMITSTART', $this->log);
@@ -31,6 +45,13 @@ class LogParser
         }
     }
 
+    /**
+     * Parse raw log of a single commit and returns its data.
+     *
+     * @param string $rawCommitLog  Raw log of single commit
+     * 
+     * @return array
+     */
     protected function parseCommitLog($rawCommitLog)
     {
         $commitData = [];
@@ -48,11 +69,23 @@ class LogParser
         return $commitData;
     }
 
+    /**
+     * Removes and returns first line of raw log.
+     *
+     * @param array $lines  Raw commit log passed by reference
+     * @return string
+     */
     protected function shiftLine(&$lines)
     {
         return array_shift($lines);
     }
 
+    /**
+     * Removes first line of raw log and returns as DateTime object.
+     *
+     * @param array $lines  Raw commit log passed by reference
+     * @return DateTime
+     */
     protected function shiftDate(&$lines)
     {
         $dateTime = new \DateTime;
@@ -60,6 +93,12 @@ class LogParser
         return $dateTime->setTimestamp(array_shift($lines));
     }
 
+    /**
+     * Removes and returns commit message from couple of lines of raw log.
+     *
+     * @param array $lines  Raw commit log passed by reference
+     * @return string
+     */
     protected function shiftMessage(&$lines)
     {
         $message = "";
@@ -77,7 +116,13 @@ class LogParser
         return trim($message);
     }
 
-
+    /**
+     * Extract files from raw log and returns as array.
+     * Files are sorted by mode: create, delete and modify.
+     *
+     * @param string $commitLog   Raw commit log
+     * @return array
+     */
     protected function shiftFiles($commitLog)
     {
         $matches = [];
