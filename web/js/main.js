@@ -45,6 +45,7 @@
     neq += (parseInt(window.content.css('padding-top')) + parseInt(window.content.css('padding-bottom')));
     neq += (commitsList.height() - dataTableBody.height());
 
+    // Sets table of commits to full window height.
     var setBoxHeight = function() {
         dataTableBody.height($(window).height() - neq);
         commitFilesBody.height(commitsList.height() -64);
@@ -52,13 +53,18 @@
 
     setBoxHeight();
 
+    // Set height on window resize.
     $(window).resize(function() {
         setBoxHeight();
     });
 
     var tableRows = $('tbody tr', commitsList);
+    var actualCommit = null;
     var actualCommitList = null;
+    var actualDiffList = null;
+    var actualDiffDeployList = null;
 
+    // Set height on datatable redraw.
     window.$commitListTable.on('draw.dt', function () {
         setBoxHeight();
         tableRows = $('tbody tr', commitsList);
@@ -76,15 +82,55 @@
                 actualCommitList.hide();
             }
 
-            actualCommitList = $('#commit-' + row.data('commit-hash')).show();
+            actualCommit = row.data('commit-hash');
+            actualCommitList = $('#commit-' + actualCommit).show();
+            $('#tab-folder-commit-files').tab('show');
         }
 
     });
     
     tableRows.first().trigger('click');
 
+    // Showing diff in tab
+    $('a[data-toggle="tab"]', commitFiles).on('shown.bs.tab', function (e) {
+        if ($(e.target).hasClass('load-diff')) {
+
+            var container = null;
+            
+            if (e.target.href.indexOf('#tab-diff-deploy') !== -1) { // Files diff to last deploy
+                if (actualDiffDeployList !== null) {
+                    actualDiffDeployList.hide();
+                }
+
+                container = actualDiffDeployList = $('#diff-'+ actualCommit +'-deploy').show();
+
+            } else {
+                if (actualDiffList !== null) {
+                    actualDiffList.hide();
+                }
+
+                container = actualDiffList = $('#diff-' + actualCommit).show();
+            }
+
+            if (container.html() === '') {
+                var commitHashFrom =  container.data('commit-from');
+                var commitHashTo =  container.data('commit-to');
+
+                addSpinner(container);
+
+                var ajax = new Ajax();
+                ajax.loadContent('/project/show-diff/'+ commitsList.data('environment-id') +'/'+ commitHashFrom +'/'+ commitHashTo, [], container);
+            }
+        }
+    });
+
 }(jQuery));
 
+
+function addSpinner(container)
+{
+    container.append('<div class="spinner"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>');
+}
 
 function Ajax()
 {

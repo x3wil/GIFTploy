@@ -1,3 +1,5 @@
+{% import 'Default/macros.twig' as macros %}
+
 {% spaceless %}
 <strong>Commit:</strong> <span class="commit-hash">{{ commit.getCommitHash() }} [{{ commit.getCommitHashAbbrev() }}]</span><br />
 <br />
@@ -5,18 +7,11 @@
 <br />
 <table class="table table-condensed">
     <tbody>
-        {%- for type, files in commit.getFiles() %}
+        {%- for mode, files in commit.getFiles() %}
             {%- for file in files %}
                 <tr>
                     <td>
-                        {%- if type == 'create' %}
-                            <span class="file-ico {{ type }} fa fa-plus-square"></span>
-                        {%- elseif type == 'delete' %}
-                            <span class="file-ico {{ type }} fa fa-minus-square"></span>
-                        {%- else %}
-                            <span class="file-ico {{ type }} fa fa-pencil-square"></span>
-                        {%- endif %}
-
+                        <span class="file-ico {{ mode }} fa {{ macros.getIcoByFileMode(mode) }}"></span>
                         {{- file }}
                     </td>
                 </tr>

@@ -1,0 +1,73 @@
+{% import 'Default/macros.twig' as macros %}
+
+{% spaceless %}
+<table class="table table-condensed">
+    <tbody>
+        {%- for file in diffFiles %}
+            <tr>
+                <td>
+                    <span class="file-ico {{ file.mode }} fa {{ macros.getIcoByFileMode(file.mode) }}"></span>
+                    {{- file.filename }}
+                </td>
+            </tr>
+        {%- endfor %}
+    </tbody>
+</table>
+{% endspaceless %}
+
+{% for file in diffFiles %}
+    <div class="box box-{{ macros.getClassByFileMode(file.mode) }} diff-files {{ file.mode }}">
+        <div class="box-header">
+            <h3 class="box-title"><span class="file-ico {{ file.mode }} fa {{ macros.getIcoByFileMode(file.mode) }}"></span>{{ file.filename }}</h3>
+        </div>
+
+        {% if file.binary == false %}
+            {% spaceless %}
+            <div class="box-body no-padding">
+                <table class="table table-condensed">
+                    {% for changes in file.changes %}
+
+                        {% set leftStart = changes.leftLine.start %}
+                        {% set leftCount = changes.leftLine.count %}
+
+                        {% set rightStart = changes.rightLine.start %}
+                        {% set rightCount = changes.rightLine.count %}
+
+                        {% for line in changes.lines %}
+                            {% if line|first == '+' %}
+                                {% set lineChange = 'success' %}
+                            {% elseif line|first == '-' %}
+                                {% set lineChange = 'danger' %}
+                            {% else %}
+                                {% set lineChange = null %}
+                            {% endif %}
+
+                            <tr{% if lineChange != null %} class="{{ lineChange }}"{% endif %}>
+                                <td>
+                                    {%- if lineChange != 'success' -%}
+                                        {{- leftStart -}}
+                                        {%- set leftStart = leftStart + 1 -%}
+                                    {%- endif -%}
+                                </td>
+                                <td>
+                                    {%- if lineChange != 'danger' -%}
+                                        {{- rightStart -}}
+                                        {%- set rightStart = rightStart + 1 -%}
+                                    {%- endif -%}
+                                </td>
+                                <td>{{ line[1:] }}</td>
+                            </tr>
+
+                        {% endfor %}
+
+                        {% if loop.last != true %}
+                            <tr class="change-between"><td colspan="3">&nbsp;</td></tr>
+                        {% endif %}
+
+                    {% endfor %}
+                </table>
+            </div>
+            {% endspaceless %}
+        {% endif %}
+    </div>
+{% endfor %}

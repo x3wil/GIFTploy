@@ -1,0 +1,19 @@
+{% macro getIcoByFileMode(mode) %}
+    {%- if mode == 'create' %}
+        fa-plus-square
+    {%- elseif mode == 'delete' %}
+        fa-minus-square
+    {%- else %}
+        fa-pencil-square
+    {%- endif %}
+{% endmacro %}
+
+{% macro getClassByFileMode(mode) %}
+    {%- if mode == 'create' %}
+        success
+    {%- elseif mode == 'delete' %}
+        danger
+    {%- else %}
+        warning
+    {%- endif %}
+{% endmacro %}

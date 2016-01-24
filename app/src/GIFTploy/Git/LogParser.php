@@ -101,7 +101,7 @@ class LogParser
      */
     protected function shiftMessage(&$lines)
     {
-        $message = "";
+        $message = '';
         $line = array_shift($lines);
 
         while ($line !== 'ENDOFOUTPUTGITMESSAGE')
@@ -127,10 +127,10 @@ class LogParser
     {
         $matches = [];
 
-        preg_match_all("~^[\d|-]+\s+[\d|-]+\s+(.*)$~m", $commitLog, $matches);
-        $files = array_fill_keys($matches[1], "modify");
+        preg_match_all('~^[\d|-]+\s+[\d|-]+\s+(.*)$~m', $commitLog, $matches);
+        $files = array_fill_keys($matches[1], 'modify');
 
-        preg_match_all("~^\s*(create|delete)\s+mode\s+\d+\s+(.*)$~m", $commitLog, $matches, PREG_SET_ORDER);
+        preg_match_all('~^\s*(create|delete)\s+mode\s+\d+\s+(.*)$~m', $commitLog, $matches, PREG_SET_ORDER);
 
         foreach ($matches as $match) {
 
@@ -138,9 +138,9 @@ class LogParser
         }
 
         $filesArr = [
-            "modify" => [],
-            "delete" => [],
-            "create" => [],
+            'modify' => [],
+            'delete' => [],
+            'create' => [],
         ];
 
         foreach ($files as $file => $treatment) {

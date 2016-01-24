@@ -128,6 +128,27 @@ class ProjectController extends Controller
     }
 
     /**
+     * @Route("/show-diff/{environmentId}/{commitHashFrom}/{commitHashTo}", name="show-diff", requirements={"environmentId"="\d+"})
+     */
+    public function showDiff($environmentId, $commitHashFrom, $commitHashTo)
+    {
+        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+
+        $diff = new \GIFTploy\Git\Diff($gitRepository);
+        
+        $diffFiles = $diff->setCommitHashFrom($commitHashFrom)
+            ->setCommitHashTo($commitHashTo)
+            ->getFiles([], true);
+
+        $response = $this->render('Repository/_show-diff.twig', [
+            'diffFiles' => $diffFiles,
+        ]);
+
+        return $this->app->json(['html' => $response->getContent()]);
+    }
+
+    /**
      * @Route("/clone/{repositoryId}", name="repository-clone", requirements={"id"="\d+"})
      */
     public function cloneRepository($repositoryId)

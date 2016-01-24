@@ -1,6 +1,9 @@
 <?php
 /** @var $app Application */
 
+set_time_limit(900);  // 15 minutes
+ini_set('memory_limit', '256M');
+
 $app['settings'] = [
     'git-binnary' => 'c:\Program Files (x86)\Git\bin\git.exe',
     'process-timeout' => 3600,
@@ -41,10 +44,10 @@ $app['doctrine.options'] = array(
 );
 $app['doctrine.connection'] = array(
     'driver' => 'pdo_mysql',
-    'host' => 'localhost',
-    'user' => 'root',
-    'password' => 'malina',
-    'dbname' => 'giftploy-silex',
+    'host' => '',
+    'user' => '',
+    'password' => '',
+    'dbname' => '',
     'charset' => 'UTF8',
     'path' => $app->getOpenDir() . 'database.db',
 );
