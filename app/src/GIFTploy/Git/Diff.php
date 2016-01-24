@@ -18,6 +18,13 @@ class Diff
     protected $repository;
 
     /**
+     * Instance of Parser.
+     *
+     * @var Parser
+     */
+    protected $parser;
+
+    /**
      * @var string
      */
     protected $commitHashFrom;
@@ -30,9 +37,10 @@ class Diff
     /**
      * @param Repository $respository
      */
-    public function __construct(Repository $respository)
+    public function __construct(Repository $respository, Parser\Parser $parser)
     {
         $this->repository = $respository;
+        $this->parser = $parser;
     }
 
     /**
@@ -105,19 +113,17 @@ class Diff
 
         $diffRaw = $this->repository->run('diff', $args);
 
-        $diffParser = new DiffParser($diffRaw->getOutput());
-
         if ($asArray) {
             $data = [];
 
-            foreach ($diffParser->parse() as $file) {
+            foreach ($this->parser->parse($diffRaw->getOutput()) as $file) {
                 $data[] = $file;
             }
 
             return $data;
         }
 
-        return $diffParser->parse();
+        return $this->parser->parse($diffRaw->getOutput());
     }
 
 }

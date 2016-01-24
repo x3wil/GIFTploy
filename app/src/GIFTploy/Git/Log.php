@@ -9,12 +9,20 @@ namespace GIFTploy\Git;
  */
 class Log
 {
+
     /**
      * Instance of Repository.
      *
      * @var Repository
      */
     protected $repository;
+
+    /**
+     * Instance of Parser.
+     *
+     * @var Parser
+     */
+    protected $parser;
 
     /**
      * Commits limit from log.
@@ -33,9 +41,10 @@ class Log
     /**
      * @param Repository $respository
      */
-    public function __construct(Repository $respository)
+    public function __construct(Repository $respository, Parser\Parser $parser)
     {
         $this->repository = $respository;
+        $this->parser = $parser;
     }
 
     /**
@@ -69,7 +78,7 @@ class Log
      */
     public function getLimit()
     {
-        return (int)$this->limit;
+        return (int) $this->limit;
     }
 
     /**
@@ -93,7 +102,7 @@ class Log
      */
     public function getOffset()
     {
-        return (int)$this->offset;
+        return (int) $this->offset;
     }
 
     /**
@@ -144,10 +153,10 @@ class Log
             $args[] = '--skip='.$this->getOffset();
         }
 
-        $logParser = $this->getParserOutput($args);
+        $rawLog = $this->getParserOutput($args);
 
         $commits = [];
-        foreach ($logParser->parse() as $commit) {
+        foreach ($this->parser->parse($rawLog) as $commit) {
             $commits[] = new Commit($this->getRepository(), $commit['commitHash'], $commit);
         }
 
@@ -163,14 +172,12 @@ class Log
     protected function getParserOutput(array $args = [])
     {
         $logArgs = array_merge([
-			'--numstat',
-			'--summary',
-			'--pretty=format:COMMITSTART%H%n%h%n%P%n%aN%n%ae%n%ct%n%s%n%b%nENDOFOUTPUTGITMESSAGE',
-        ], $args);
+            '--numstat',
+            '--summary',
+            '--pretty=format:COMMITSTART%H%n%h%n%P%n%aN%n%ae%n%ct%n%s%n%b%nENDOFOUTPUTGITMESSAGE',
+            ], $args);
 
-		$logRaw = $this->repository->run('log', $logArgs);
-
-        return new LogParser($logRaw->getOutput());
+        return $this->repository->run('log', $logArgs)->getOutput();
     }
 
 }

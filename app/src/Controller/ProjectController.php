@@ -5,6 +5,8 @@ namespace Controller;
 use Silicone\Route;
 use Silicone\Controller;
 use GIFTploy\Git\Git;
+use GIFTploy\Git\Parser\LogParser;
+use GIFTploy\Git\Parser\DiffParser;
 use GIFTploy\ProcessConsole;
 
 /**
@@ -116,7 +118,7 @@ class ProjectController extends Controller
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
             'gitRepository' => $gitRepository,
-            'commits' => $gitRepository->getLog()->getCommits(),
+            'commits' => $gitRepository->getLog(new LogParser())->getCommits(),
         ]);
     }
 
@@ -135,7 +137,7 @@ class ProjectController extends Controller
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $diff = new \GIFTploy\Git\Diff($gitRepository);
+        $diff = new \GIFTploy\Git\Diff($gitRepository, new DiffParser());
         
         $diffFiles = $diff->setCommitHashFrom($commitHashFrom)
             ->setCommitHashTo($commitHashTo)

@@ -69,7 +69,7 @@ class Repository
             '--work-tree',
             $this->dir,
         ];
-        
+
         $process = Git::getProcess(array_merge($baseCommand, [$command]), $args);
 
         return Git::runProcess($process);
@@ -78,11 +78,12 @@ class Repository
     /**
      * Returns instance of Log scoped to this repository.
      *
+     * @param Parser\Parser $parser
      * @return Log
      */
-    public function getLog()
+    public function getLog(Parser\Parser $parser)
     {
-        return new Log($this);
+        return new Log($this, $parser);
     }
 
     /**
@@ -96,4 +97,5 @@ class Repository
     {
         return isset($this->commits[$commitHash]) ? $this->commits[$commitHash] : new Commit($this, $commitHash);
     }
+
 }

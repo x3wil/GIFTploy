@@ -1,39 +1,23 @@
 <?php
 
-namespace GIFTploy\Git;
+namespace GIFTploy\Git\Parser;
 
 /**
  * Class for parsing raw diff output.
  *
  * @author Patrik Chotěnovský
  */
-class DiffParser
+class DiffParser implements Parser
 {
-    /**
-     * Raw diff output.
-     *
-     * @var string
-     */
-    protected $diff;
-
-    /**
-     * Sets a raw diff.
-     *
-     * @param type $rawDiff
-     */
-    public function __construct($rawDiff)
-    {
-        $this->diff = $rawDiff;
-    }
 
     /**
      * Explode raw diff by files and returns parsed data as generator.
      *
      * @return Generator
      */
-    public function parse()
+    public function parse($rawDiff)
     {
-        $diffByFiles = preg_split('~^diff --git ~m', $this->diff);
+        $diffByFiles = preg_split('~^diff --git ~m', $rawDiff);
 
         foreach ($diffByFiles as $rawFileDiff) {
 

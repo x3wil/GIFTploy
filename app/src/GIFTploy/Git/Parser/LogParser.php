@@ -1,39 +1,23 @@
 <?php
 
-namespace GIFTploy\Git;
+namespace GIFTploy\Git\Parser;
 
 /**
  * Class for parsing raw log output.
  *
  * @author Patrik Chotěnovský
  */
-class LogParser
+class LogParser implements Parser
 {
-    /**
-     * Raw log output.
-     *
-     * @var string
-     */
-    protected $log;
-
-    /**
-     * Sets a raw log.
-     *
-     * @param type $rawLog
-     */
-    public function __construct($rawLog)
-    {
-        $this->log = $rawLog;
-    }
 
     /**
      * Explode raw log by commits and returns by a single commit data.
      *
      * @return Generator
      */
-    public function parse()
+    public function parse($rawLog)
     {
-        $logByCommits = explode('COMMITSTART', $this->log);
+        $logByCommits = explode('COMMITSTART', $rawLog);
 
         foreach ($logByCommits as $rawCommitLog) {
 
@@ -104,8 +88,7 @@ class LogParser
         $message = '';
         $line = array_shift($lines);
 
-        while ($line !== 'ENDOFOUTPUTGITMESSAGE')
-        {
+        while ($line !== 'ENDOFOUTPUTGITMESSAGE') {
             if (!empty($line)) {
                 $message .= $line;
             }
