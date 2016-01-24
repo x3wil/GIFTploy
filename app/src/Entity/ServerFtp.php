@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use GIFTploy\Filesystem\ServerInterface;
 
 /**
  * Repository
@@ -15,7 +16,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  * @ORM\Entity(repositoryClass="Entity\ServerFtpRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class ServerFtp
+class ServerFtp implements ServerInterface
 {
 
     /**
@@ -434,5 +435,32 @@ class ServerFtp
     public function getUpdatedAt()
     {
         return $this->updatedAt;
+    }
+
+    /**
+     * Returns configuration array for Flysystem adapter.
+     *
+     * @return array
+     */
+    public function getConfiguration()
+    {
+        return [
+            'host' => $this->getHost(),
+            'username' => $this->getUsername(),
+            'password' => $this->getPassword(),
+            'port' => $this->getPort(),
+            'root' => $this->getPath(),
+            'passive' => $this->getPassive(),
+            'ssl' => $this->getSslConnection(),
+            'timeout' => $this->getTimeout(),
+        ];
+    }
+
+    /**
+     * @return \League\Flysystem\Adapter\Ftp
+     */
+    public function getAdapter()
+    {
+        return new \League\Flysystem\Adapter\Ftp($this->getConfiguration());
     }
 }

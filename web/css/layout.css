@@ -22,17 +22,23 @@
 .content-header .header-side {
   float: right;
 }
-.content-header .header-side a.btn .fa {
-  margin-right: 8px;
-}
 .content-header .header-side .server-switch {
-  margin-bottom: 0;
+  height: 34px;
+  min-height: auto;
 }
-.content-header .header-side .server-switch .box-header {
-  padding: 10px 39px 10px 10px;
+.content-header .header-side .server-switch .info-box-icon {
+  height: 34px;
+  width: 34px;
+  font-size: 24px;
+  line-height: 34px;
 }
-.content-header .header-side .server-switch .box-header .box-title {
-  font-size: 14px;
+.content-header .header-side .server-switch .info-box-content {
+  float: left;
+  margin-left: 0;
+  padding: 7px 10px;
+}
+.content-header .header-side .server-switch .info-box-content.buttons {
+  padding: 0;
 }
 .file-ico {
   display: inline-block;
@@ -46,6 +52,9 @@
 }
 .file-ico.modify {
   color: #F0AD4E;
+}
+.content.header-box {
+  padding-top: 0;
 }
 .content .commit-hash {
   font-family: monospace;

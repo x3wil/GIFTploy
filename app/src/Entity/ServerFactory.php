@@ -11,11 +11,11 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 /**
  * Server
  *
- * @ORM\Table(name="server")
- * @ORM\Entity(repositoryClass="Entity\ServerRepository")
+ * @ORM\Table(name="server_factory")
+ * @ORM\Entity(repositoryClass="Entity\ServerFactoryRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class Server
+class ServerFactory
 {
 
     /**
@@ -49,6 +49,13 @@ class Server
     private $typeId;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="default", type="boolean", nullable=true)
+     */
+    private $default;
+
+    /**
      * @var \DateTime
      *
      * @ORM\Column(name="created_at", type="datetime", nullable=true)
@@ -61,6 +68,17 @@ class Server
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * Returns server entity based on type.
+     *
+     * @param \GIFTploy\Filesystem\ServerFactory $factory
+     * @return mixed
+     */
+    public function getServer(\GIFTploy\Filesystem\ServerFactory $factory)
+    {
+        return $factory->create($this->getType(), $this->getTypeId());
+    }
 
     /**
      * @ORM\PreUpdate()
@@ -93,12 +111,12 @@ class Server
      * Set type
      *
      * @param string $type
-     * @return Server
+     * @return ServerFactory
      */
     public function setType($type)
     {
         $this->type = $type;
-    
+
         return $this;
     }
 
@@ -116,12 +134,12 @@ class Server
      * Set typeId
      *
      * @param integer $typeId
-     * @return Server
+     * @return ServerFactory
      */
     public function setTypeId($typeId)
     {
         $this->typeId = $typeId;
-    
+
         return $this;
     }
 
@@ -136,15 +154,38 @@ class Server
     }
 
     /**
+     * Set default
+     *
+     * @param boolean $default
+     * @return ServerFactory
+     */
+    public function setDefault($default)
+    {
+        $this->default = $default;
+
+        return $this;
+    }
+
+    /**
+     * Get default
+     *
+     * @return boolean
+     */
+    public function getDefault()
+    {
+        return $this->default;
+    }
+
+    /**
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return Server
+     * @return ServerFactory
      */
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
@@ -162,12 +203,12 @@ class Server
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * @return Server
+     * @return ServerFactory
      */
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    
+
         return $this;
     }
 
@@ -185,12 +226,12 @@ class Server
      * Set environment
      *
      * @param \Entity\Environment $environment
-     * @return Server
+     * @return ServerFactory
      */
     public function setEnvironment(\Entity\Environment $environment = null)
     {
         $this->environment = $environment;
-    
+
         return $this;
     }
 
@@ -203,4 +244,5 @@ class Server
     {
         return $this->environment;
     }
+
 }

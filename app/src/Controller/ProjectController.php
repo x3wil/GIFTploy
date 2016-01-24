@@ -7,7 +7,9 @@ use Silicone\Controller;
 use GIFTploy\Git\Git;
 use GIFTploy\Git\Parser\LogParser;
 use GIFTploy\Git\Parser\DiffParser;
+use GIFTploy\Filesystem\ServerFactory;
 use GIFTploy\ProcessConsole;
+use GIFTploy\Filesystem\FilesystemBuilder;
 
 /**
  * @Route("/project")
@@ -110,6 +112,11 @@ class ProjectController extends Controller
         $directory = $this->app->getProjectsDir().$environmentObj->getDirectory();
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
+        $serverDefault = $environmentObj->getServers(1)->first();
+//        $serverOthers = $environmentObj->getServers(0);
+
+        $server = ($serverDefault ? $serverDefault->getServer(new ServerFactory($this->app->entityManager())) : null);
+
         if (!$gitRepository) {
             $gitRepository = Git::cloneRepository($directory, $repositoryObj->getUrl(), $environmentObj->getBranch());
         }
@@ -119,6 +126,7 @@ class ProjectController extends Controller
             'environmentObj' => $environmentObj,
             'gitRepository' => $gitRepository,
             'commits' => $gitRepository->getLog(new LogParser())->getCommits(),
+            'server' => $server,
         ]);
     }
 

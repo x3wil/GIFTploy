@@ -1,4 +1,5 @@
 GIFTploy
 =================
 
-Deployment tool written in PHP
+Deployment tool powered by Silex Framework.
+In early development, not fully functional.

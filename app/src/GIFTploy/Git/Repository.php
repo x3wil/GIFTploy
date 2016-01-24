@@ -54,6 +54,16 @@ class Repository
     }
 
     /**
+     * Returns git directory.
+     *
+     * @return string
+     */
+    public function getDir()
+    {
+        return $this->dir;
+    }
+
+    /**
      * Run process scoped to this repository by setting --git-dir and --work-tree.
      *
      * @param type $command Command to execute

@@ -112,17 +112,17 @@ class DiffParser implements Parser
     {
         $diffByFiles = explode('@@', $rawFileDiff);
         $changes = [];
-        
+
         array_shift($diffByFiles);
 
         foreach ($diffByFiles as $part) {
 
             $matches = [];
 
-            if (preg_match('~[-\+]?([\d]+),[-\+]?([\d]+) [-\+]?([\d]+),[-\+]?([\d]+)~m', $part, $matches)) {
+            if (preg_match('~^\s[-\+]?([\d]+),[-\+]?([\d]+) [-\+]?([\d]+)(,[-\+]?([\d]+))?\s$~', $part, $matches)) {
                 $change = [
                     'leftLine' => ['start' => (int)$matches[1], 'count' => (int)$matches[2]],
-                    'rightLine' => ['start' => (int)$matches[3], 'count' => (int)$matches[4]],
+                    'rightLine' => ['start' => (int)$matches[3], 'count' => (isset($matches[5]) ? (int)$matches[5] : 0)],
                 ];
 
                 continue;

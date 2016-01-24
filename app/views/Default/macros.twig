@@ -9,11 +9,11 @@
 {% endmacro %}
 
 {% macro getClassByFileMode(mode) %}
-    {%- if mode == 'create' %}
+    {%- if mode == 'create' -%}
         success
-    {%- elseif mode == 'delete' %}
+    {%- elseif mode == 'delete' -%}
         danger
-    {%- else %}
+    {%- else -%}
         warning
-    {%- endif %}
+    {%- endif -%}
 {% endmacro %}

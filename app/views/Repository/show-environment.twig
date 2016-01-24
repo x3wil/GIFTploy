@@ -4,8 +4,40 @@
     {{ environmentObj.getTitle() }} <small>[{{ environmentObj.getBranch() }}]</small>
 {% endblock %}
 
+{% block contentClass %}header-box{% endblock %}
+
 {% block headerSide %}
-    <a href="{{ url('server-ftp-new', {'environmentId': environmentObj.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i>Add server</a>
+    <div class="info-box server-switch">
+        {% if server %}
+            <a href="{{ url('server-ftp-edit', {'id': server.getId(), 'environmentId': environmentObj.getId()}) }}" class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></a>
+            <div class="info-box-content">
+                <span class="info-box-text">{{ server.getTitle() }}</span>
+            </div>
+            <div class="info-box-content buttons">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success btn-flat">Deploy</button>
+                    <button type="button" class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu pull-right" role="menu">
+                        <li><a href="#">Mark all as deployed</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#">Add new server</a></li>
+                    </ul>
+                </div>
+            </div>
+        {% else %}
+            <span class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></span>
+            <div class="info-box-content">
+                <span class="info-box-text">There is no server for this environment</span>
+            </div>
+            <div class="info-box-content buttons">
+                <a href="{{ url('server-ftp-new', {'environmentId': environmentObj.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i></a>
+            </div>
+        {% endif %}
+    </div>
+
 {% endblock %}
 
 
@@ -62,12 +94,12 @@
                             <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}" data-commit-from="{{ commit.getParentHash() }}" data-commit-to="{{ commit.getCommitHash() }}"></div>
                         {% endfor %}
                     </div>
-                    
+
                     <div class="tab-pane" id="tab-diff-deploy">
                         {% set showDiffDeploy = true %}
                         {% for commit in commits %}
                             {% if showDiffDeploy and commit.getCommitHash() != '' %}
-                            <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="" data-commit-to="{{ commit.getCommitHash() }}"></div>
+                                <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="" data-commit-to="{{ commit.getCommitHash() }}"></div>
                             {% else %}
                                 {% set showDiffDeploy = false %}
                             {% endif %}

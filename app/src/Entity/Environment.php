@@ -7,6 +7,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\Common\Collections\Criteria;
 
 /**
  * Repository
@@ -34,7 +35,7 @@ class Environment
     private $repository;
 
     /**
-     * @ORM\OneToMany(targetEntity="Server", mappedBy="environment")
+     * @ORM\OneToMany(targetEntity="ServerFactory", mappedBy="environment")
      */
     private $servers;
 
@@ -287,9 +288,15 @@ class Environment
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getServers()
+    public function getServers($default = null)
     {
-        return $this->servers;
+        $criteria = Criteria::create();
+
+        if ($default !== null) {
+            $criteria->where(Criteria::expr()->eq('default', $default));
+        }
+        
+        return $this->servers->matching($criteria);
     }
 
     public function getDirectory()

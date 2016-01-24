@@ -99,7 +99,7 @@
                     <div class="clearfix"></div>
                 {% endif %}
 
-                <section class="content">
+                <section class="content {% block contentClass %}{% endblock %}">
                     {% block content %}{% endblock %}
                 </section>
             </div>
