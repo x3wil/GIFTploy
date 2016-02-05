@@ -5,7 +5,7 @@ namespace Entity;
 use Doctrine\ORM\EntityRepository;
 
 /**
- * EnvironmentRepository
+ * ServerFtpRepository
  */
 class ServerFtpRepository extends EntityRepository
 {

@@ -141,10 +141,8 @@ class Log
      *
      * @return array
      */
-    public function getCommits()
+    public function getCommits(array $args = [])
     {
-        $args = [];
-
         if ($this->getLimit() > 0) {
             $args[] = '-'.($this->getLimit());
         }

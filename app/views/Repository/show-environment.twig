@@ -98,8 +98,8 @@
                     <div class="tab-pane" id="tab-diff-deploy">
                         {% set showDiffDeploy = true %}
                         {% for commit in commits %}
-                            {% if showDiffDeploy and commit.getCommitHash() != '' %}
-                                <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="" data-commit-to="{{ commit.getCommitHash() }}"></div>
+                            {% if showDiffDeploy and commit.getCommitHash() != lastDeployedRevision %}
+                                <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="{{ lastDeployedRevision }}" data-commit-to="{{ commit.getCommitHash() }}"></div>
                             {% else %}
                                 {% set showDiffDeploy = false %}
                             {% endif %}

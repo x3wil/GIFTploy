@@ -1,7 +1,5 @@
 app/vendor/*
 app/open/*
-composer.lock
-.idea/
 
 vendor/
 !web/vendor/

@@ -29,7 +29,7 @@ class ServerFactory
 
     /**
      * @ORM\ManyToOne(targetEntity="Environment", inversedBy="servers")
-     * @ORM\JoinColumn(name="envronment_id", referencedColumnName="id")
+     * @ORM\JoinColumn(name="environment_id", referencedColumnName="id")
      */
     private $environment;
 

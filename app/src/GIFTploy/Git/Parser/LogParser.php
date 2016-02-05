@@ -127,7 +127,7 @@ class LogParser implements Parser
         ];
 
         foreach ($files as $file => $treatment) {
-            $filesArr[$treatment][] = $file;
+            $filesArr[$treatment][] = trim($file, '/');
         }
 
         return $filesArr;

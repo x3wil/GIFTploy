@@ -64,7 +64,7 @@ class DiffParser implements Parser
         $matches = [];
         preg_match('~^a(.*)\sb.*$~', array_shift($lines), $matches);
 
-        return $matches[1];
+        return trim($matches[1], '/');
     }
 
     /**

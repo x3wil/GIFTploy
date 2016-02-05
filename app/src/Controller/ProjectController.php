@@ -10,6 +10,7 @@ use GIFTploy\Git\Parser\DiffParser;
 use GIFTploy\Filesystem\ServerFactory;
 use GIFTploy\ProcessConsole;
 use GIFTploy\Filesystem\FilesystemBuilder;
+use GIFTploy\Deployer\Deployer;
 
 /**
  * @Route("/project")
@@ -18,8 +19,8 @@ class ProjectController extends Controller
 {
 
     /**
-     * @Route("/new-repository", name="repository-new")
-     * @Route("/edit-repository/{id}", name="repository-edit", requirements={"id"="\d+"})
+     * @Route("/new-project", name="project-new")
+     * @Route("/edit-project/{id}", name="project-edit", requirements={"id"="\d+"})
      */
     public function repositoryform($id = null)
     {
@@ -112,21 +113,27 @@ class ProjectController extends Controller
         $directory = $this->app->getProjectsDir().$environmentObj->getDirectory();
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $serverDefault = $environmentObj->getServers(1)->first();
-//        $serverOthers = $environmentObj->getServers(0);
-
-        $server = ($serverDefault ? $serverDefault->getServer(new ServerFactory($this->app->entityManager())) : null);
-
         if (!$gitRepository) {
             $gitRepository = Git::cloneRepository($directory, $repositoryObj->getUrl(), $environmentObj->getBranch());
         }
+
+        $serverDefault = $environmentObj->getServers(1)->first();
+        $server = ($serverDefault ? $serverDefault->getServer(new ServerFactory($this->app->entityManager())) : null);
+        $lastDeployedRevision = null;
+
+        if ($server) {
+            $deployer = new Deployer(new FilesystemBuilder($gitRepository, $server));
+            $lastDeployedRevision = $deployer->fetchLastDeployedRevision();
+        }
+        
 
         return $this->render('Repository/show-environment.twig', [
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
             'gitRepository' => $gitRepository,
-            'commits' => $gitRepository->getLog(new LogParser())->getCommits(),
+            'commits' => $gitRepository->getLog(new LogParser())->getCommits([], true),
             'server' => $server,
+            'lastDeployedRevision' => $lastDeployedRevision,
         ]);
     }
 

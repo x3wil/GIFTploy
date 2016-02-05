@@ -108,4 +108,27 @@ class Repository
         return isset($this->commits[$commitHash]) ? $this->commits[$commitHash] : new Commit($this, $commitHash);
     }
 
+    /**
+     * Returns first commit in tree
+     *
+     * @return Commit
+     */
+	public function getFirstCommit(Parser\Parser $parser)
+	{
+        $log = $this->getLog($parser);
+        
+        $commits = $log->getCommits([
+            '--reverse',
+        ]);
+
+        return current($commits);
+	}
+
+    public function checkout($commitHash)
+    {
+        $this->run('checkout', [$commitHash]);
+
+        return $this->run('checkout', [$commitHash]);
+    }
+
 }
