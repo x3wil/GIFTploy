@@ -16,11 +16,12 @@
         'scrollCollapse': true,
         'columns': [
             { 'orderable': false },
-            { 'width': '5%' },
+            { 'orderable': false },
+            { 'width': '5%'},
             { 'width': '5%' },
             { 'width': '3%', 'orderable': false }
         ],
-        'order': [[ 1, 'desc' ]]
+        'order': [[ 2, 'desc' ]]
     });
 
 }(jQuery));
@@ -71,7 +72,7 @@
     });
 
     commitsList.on('click', 'tbody tr', function() {
-        
+
         var row = $(this);
 
         if (!row.hasClass('info')) {
@@ -85,10 +86,12 @@
             actualCommit = row.data('commit-hash');
             actualCommitList = $('#commit-' + actualCommit).show();
             $('#tab-folder-commit-files').tab('show');
+
+            setCommitButtons(row);
         }
 
     });
-    
+
     tableRows.first().trigger('click');
 
     // Showing diff in tab
@@ -96,7 +99,7 @@
         if ($(e.target).hasClass('load-diff')) {
 
             var container = null;
-            
+
             if (e.target.href.indexOf('#tab-diff-deploy') !== -1) { // Files diff to last deploy
                 if (actualDiffDeployList !== null) {
                     actualDiffDeployList.hide();
@@ -126,6 +129,25 @@
 
 }(jQuery));
 
+function setCommitButtons(row)
+{
+    var buttonCommitDeploy = $('#button-commit-deploy');
+    var buttonCommitRollback = $('#button-commit-rollback');
+    var deployUrl = $('#commit-buttons').data('deploy-url');
+    var isDeployed = parseInt(row.data('commit-deployed'));
+
+    deployUrl = deployUrl.replace('commitHash', row.data('commit-hash'));
+
+    $('#commit-buttons a.deploy-link').attr('href', deployUrl);
+
+    if (isDeployed === 1) {
+        buttonCommitDeploy.hide();
+        buttonCommitRollback.show();
+    } else {
+        buttonCommitDeploy.show();
+        buttonCommitRollback.hide();
+    }
+}
 
 function addSpinner(container)
 {

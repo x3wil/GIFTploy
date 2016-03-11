@@ -125,15 +125,23 @@ class ProjectController extends Controller
             $deployer = new Deployer(new FilesystemBuilder($gitRepository, $server));
             $lastDeployedRevision = $deployer->fetchLastDeployedRevision();
         }
-        
+
+        $commits = $gitRepository->getLog(new LogParser())->getCommits([], true);
 
         return $this->render('Repository/show-environment.twig', [
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
             'gitRepository' => $gitRepository,
-            'commits' => $gitRepository->getLog(new LogParser())->getCommits([], true),
+            'commits' => $commits,
+            'firstCommit' => current($commits),
+            'serverFactory' => $serverDefault,
             'server' => $server,
             'lastDeployedRevision' => $lastDeployedRevision,
+            'deployUrlPrepared' => $this->app->url('deploy', [
+                'environmentId' => $environmentObj->getId(),
+                'serverFactoryId' => $serverDefault->getId(),
+                'commitHash' => 'commitHash',
+            ]),
         ]);
     }
 

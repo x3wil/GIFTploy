@@ -82,6 +82,7 @@
   padding-left: 0;
 }
 .content #commit-files .nav-tabs-custom {
+  position: relative;
   margin-bottom: 0;
 }
 .content #commit-files .tab-content {
@@ -92,6 +93,11 @@
 .content #commit-files .tab-content .commit-detail,
 .content #commit-files .tab-content commit-diff {
   display: none;
+}
+.content #commit-files .commit-buttons {
+  position: absolute;
+  right: 4px;
+  top: 4px;
 }
 .content.show-files #commit-files {
   display: block;

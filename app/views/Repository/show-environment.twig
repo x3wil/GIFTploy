@@ -15,11 +15,11 @@
             </div>
             <div class="info-box-content buttons">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-success btn-flat">Deploy</button>
-                    <button type="button" class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
+                    <a href="{{ url('deploy', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat">Deploy</a>
+                    <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
-                    </button>
+                    </a>
                     <ul class="dropdown-menu pull-right" role="menu">
                         <li><a href="#">Mark all as deployed</a></li>
                         <li class="divider"></li>
@@ -51,21 +51,33 @@
                         <thead>
                             <tr>
                                 <th>Description</th>
+                                <th>&nbsp;</th>
                                 <th>Date</th>
                                 <th>Author</th>
                                 <th>Commit</th>
                             </tr>
                         </thead>
                         <tbody id="commit-list-body">
+                            {%- set labelNew = true -%}
+                            
                             {% for commit in commits %}
-                                {% spaceless %}
-                                    <tr data-commit-hash="{{ commit.getCommitHash() }}">
-                                        <td>{{ commit.getMessage() }}</td>
-                                        <td data-sort="{{ commit.getDateTimestamp() }}">{{ commit.getDate()|raw }}</td>
-                                        <td>{{ commit.getAuthorName()|raw }}</td>
-                                        <td><span class="commit-hash">{{ commit.getCommitHashAbbrev() }}</span></td>
-                                    </tr>
-                                {% endspaceless %}
+                                {%- if commit.getCommitHash() == lastDeployedRevision -%}
+                                    {% set labelNew = false -%}
+                                {%- endif -%}
+
+                                <tr data-commit-hash="{{ commit.getCommitHash() }}" data-commit-deployed="{% if labelNew %}0{% else %}1{% endif %}">
+                                    <td>{{ commit.getMessage() }}</td>
+                                    <td>
+                                        {%- if labelNew -%}
+                                            <span class="label label-warning">new</span>
+                                        {%- else -%}
+                                            <span class="label label-success">deployed</span>
+                                        {%- endif -%}
+                                    </td>
+                                    <td data-sort="{{ commit.getDateTimestamp() }}">{{ commit.getDate()|raw }}</td>
+                                    <td>{{ commit.getAuthorName()|raw }}</td>
+                                    <td><span class="commit-hash">{{ commit.getCommitHashAbbrev() }}</span></td>
+                                </tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -78,8 +90,33 @@
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab-commit-files" data-toggle="tab" id="tab-folder-commit-files">Commit Files</a></li>
                     <li><a href="#tab-diff" data-toggle="tab" class="load-diff">Files diff</a></li>
-                    <li><a href="#tab-diff-deploy" data-toggle="tab" class="load-diff">Files diff to last deploy</a></li>
+                    {% if lastDeployedRevision %}
+                        <li><a href="#tab-diff-deploy" data-toggle="tab" class="load-diff">Files diff to last deploy</a></li>
+                    {% endif %}
                 </ul>
+                <div class="commit-buttons" id="commit-buttons" data-deploy-url="{{ deployUrlPrepared }}">
+                    <div class="btn-group" id="button-commit-deploy" style="display:none;">
+                        <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </a>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="#" class="deploy-link">Deploy to this commit</a></li>
+                            <li><a href="#" class="mark-link">Mark as deployed</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group" id="button-commit-rollback" style="display:none;">
+                        <a class="btn btn-info btn-flat dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </a>
+                        <ul class="dropdown-menu pull-right" role="menu">
+                            <li><a href="#" class="deploy-link">Rollback to this commit</a></li>
+                            <li><a href="#" class="mark-link">Mark as rolbacked</a></li>
+                        </ul>
+                    </div>
+                </div>
+
                 <div class="tab-content">
                     <div class="active tab-pane" id="tab-commit-files">
                         {% for commit in commits %}
@@ -91,23 +128,33 @@
 
                     <div class="tab-pane" id="tab-diff">
                         {% for commit in commits %}
-                            <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}" data-commit-from="{{ commit.getParentHash() }}" data-commit-to="{{ commit.getCommitHash() }}"></div>
+                            <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}" data-commit-from="{% if commit.getParentHash() %}{{ commit.getParentHash() }}{% else %}-{% endif %}" data-commit-to="{{ commit.getCommitHash() }}"></div>
                         {% endfor %}
                     </div>
 
-                    <div class="tab-pane" id="tab-diff-deploy">
-                        {% set showDiffDeploy = true %}
-                        {% for commit in commits %}
-                            {% if showDiffDeploy and commit.getCommitHash() != lastDeployedRevision %}
-                                <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="{{ lastDeployedRevision }}" data-commit-to="{{ commit.getCommitHash() }}"></div>
-                            {% else %}
-                                {% set showDiffDeploy = false %}
-                            {% endif %}
-                        {% endfor %}
-                    </div>
+                    {% if lastDeployedRevision %}
+                        <div class="tab-pane" id="tab-diff-deploy">
+                            {% set showDiffDeploy = true %}
+                            {% for commit in commits %}
+                                {% if showDiffDeploy and commit.getCommitHash() != lastDeployedRevision %}
+                                    <div class="commit-diff" id="diff-{{ commit.getCommitHash() }}-deploy" data-commit-from="{{ lastDeployedRevision }}" data-commit-to="{{ commit.getCommitHash() }}"></div>
+                                {% else %}
+                                    {% set showDiffDeploy = false %}
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>
     </div>
 
 {% endblock %}
+
+{#{%- set labelNew = true -%}
+{%- if not labelNew or commit.getCommitHash() == lastDeployedRevision -%}
+    <span class="label label-success">deployed</span>
+    {% set labelNew = false -%}
+{%- else -%}
+    <span class="label label-warning">new</span>
+{%- endif -%}#}

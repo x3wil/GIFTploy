@@ -19,9 +19,9 @@ class ProcessController extends Controller
 {
 
     /**
-     * @Route("/deploy/{environmentId}/{serverId}/{commitHash}", name="deploy", requirements={"environmentId"="\d+", "serverId"="\d+"})
+     * @Route("/deploy/{environmentId}/{serverFactoryId}/{commitHash}", name="deploy", requirements={"environmentId"="\d+", "serverFactoryId"="\d+"})
      */
-    public function deploy($environmentId, $serverId, $commitHash)
+    public function deploy($environmentId, $serverFactoryId, $commitHash)
     {
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
@@ -30,7 +30,7 @@ class ProcessController extends Controller
         $serverFactory = $this->app->entityManager()
             ->getRepository('Entity\ServerFactory')
             ->findOneBy([
-                'id' => $serverId,
+                'id' => $serverFactoryId,
                 'environment' => $environmentId,
             ]);
 
@@ -71,7 +71,7 @@ class ProcessController extends Controller
 
         $deployer->writeLastDeployedRevision($commitHash);
 
-        $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRespository()->getId(), 'environmentId' => $environmentObj->getId()]));
+        return $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRepository()->getId(), 'environmentId' => $environmentObj->getId()]));
     }
     
     protected function getFilesFromDiff(array $diffFiles, \GIFTploy\Git\Commit $firstCommit = null)
