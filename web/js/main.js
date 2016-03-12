@@ -131,14 +131,18 @@
 
 function setCommitButtons(row)
 {
+    var $commitButtons = $('#commit-buttons');
     var buttonCommitDeploy = $('#button-commit-deploy');
     var buttonCommitRollback = $('#button-commit-rollback');
-    var deployUrl = $('#commit-buttons').data('deploy-url');
+    var deployUrl = $commitButtons.data('deploy-url');
+    var markUrl = $commitButtons.data('mark-url');
     var isDeployed = parseInt(row.data('commit-deployed'));
 
     deployUrl = deployUrl.replace('commitHash', row.data('commit-hash'));
+    markUrl = markUrl.replace('commitHash', row.data('commit-hash'));
 
-    $('#commit-buttons a.deploy-link').attr('href', deployUrl);
+    $('a.deploy-link', $commitButtons).attr('href', deployUrl);
+    $('a.mark-link', $commitButtons).attr('href', markUrl);
 
     if (isDeployed === 1) {
         buttonCommitDeploy.hide();

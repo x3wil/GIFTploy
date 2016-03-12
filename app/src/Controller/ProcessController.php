@@ -24,9 +24,6 @@ class ProcessController extends Controller
     public function deploy($environmentId, $serverFactoryId, $commitHash)
     {
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
-        $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
-        $firstCommit = $gitRepository->getFirstCommit(new LogParser());
-
         $serverFactory = $this->app->entityManager()
             ->getRepository('Entity\ServerFactory')
             ->findOneBy([
@@ -35,68 +32,45 @@ class ProcessController extends Controller
             ]);
 
         $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
-        
-        $deployer = new Deployer(new FilesystemBuilder($gitRepository, $server));
-        $lastDeployedRevision = $deployer->fetchLastDeployedRevision();
+        $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $diff = new \GIFTploy\Git\Diff($gitRepository, new DiffParser());
-        $diffFiles = $diff->setCommitHashFrom(($lastDeployedRevision ? $lastDeployedRevision : $firstCommit->getCommitHash()))
-            ->setCommitHashTo($commitHash)
-            ->getFiles([], true);
+        $assembler = new \GIFTploy\Deployer\Assembler($environmentObj, $server, $workingTree);
+        $deployer = $assembler->getDeployer();
+        $fileStack = $assembler->getDiffFileStack($commitHash);
 
-        if (!$lastDeployedRevision) {
-            $gitRepository->getFirstCommit(new LogParser());
-        }
-
-        $files = $this->getFilesFromDiff($diffFiles, (!$lastDeployedRevision ? $firstCommit : null));
-
-        $fileStack = new FileStack();
-
-        foreach ($files as $mode => $fileMode) {
-            foreach ($fileMode as $file) {
-                if ($mode == 'copy') {
-                    $fileStack->copy($file);
-                } else {
-                    $fileStack->delete($file);
-                }
-            }
-        }
-
-        $gitRepository->checkout($commitHash);
+        $workingTree->checkout($commitHash);
 
         $deployer->deploy($fileStack, function($file, $result, $errorMessage) {
         });
 
-        $gitRepository->checkout($environmentObj->getBranch());
+        $workingTree->checkout($environmentObj->getBranch());
 
         $deployer->writeLastDeployedRevision($commitHash);
 
         return $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRepository()->getId(), 'environmentId' => $environmentObj->getId()]));
     }
-    
-    protected function getFilesFromDiff(array $diffFiles, \GIFTploy\Git\Commit $firstCommit = null)
+
+    /**
+     * @Route("/mark/{environmentId}/{serverFactoryId}/{commitHash}", name="mark", requirements={"environmentId"="\d+", "serverFactoryId"="\d+"})
+     */
+    public function mark($environmentId, $serverFactoryId, $commitHash)
     {
-        $files = [
-            'copy' => [],
-            'delete' => [],
-        ];
+        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        $serverFactory = $this->app->entityManager()
+            ->getRepository('Entity\ServerFactory')
+            ->findOneBy([
+                'id' => $serverFactoryId,
+                'environment' => $environmentId,
+            ]);
 
-        foreach ($diffFiles as $file) {
-            if ($file['mode'] == 'delete') {
-                $files['delete'][] = $file['filename'];
-            } else {
-                $files['copy'][] = $file['filename'];
-            }
-        }
+        $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
+        $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        if ($firstCommit !== null)
-        {
-            $filesDiff = array_diff($firstCommit->getFiles()['create'], $files['delete']);
-            $files['copy'] = array_unique(array_merge($files['copy'], $filesDiff));
-            $files['delete'] = [];
-        }
+        $assembler = new \GIFTploy\Deployer\Assembler($environmentObj, $server, $workingTree);
+        $deployer = $assembler->getDeployer();
 
-        return $files;
+        $deployer->writeLastDeployedRevision($commitHash);
+
+        return $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRepository()->getId(), 'environmentId' => $environmentObj->getId()]));
     }
-
 }

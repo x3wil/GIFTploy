@@ -142,6 +142,11 @@ class ProjectController extends Controller
                 'serverFactoryId' => $serverDefault->getId(),
                 'commitHash' => 'commitHash',
             ]),
+            'markUrlPrepared' => $this->app->url('mark', [
+                'environmentId' => $environmentObj->getId(),
+                'serverFactoryId' => $serverDefault->getId(),
+                'commitHash' => 'commitHash',
+            ]),
         ]);
     }
 

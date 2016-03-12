@@ -21,7 +21,7 @@
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="#">Mark all as deployed</a></li>
+                        <li><a href="{{ url('mark', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}">Mark all as deployed</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Add new server</a></li>
                     </ul>
@@ -94,7 +94,7 @@
                         <li><a href="#tab-diff-deploy" data-toggle="tab" class="load-diff">Files diff to last deploy</a></li>
                     {% endif %}
                 </ul>
-                <div class="commit-buttons" id="commit-buttons" data-deploy-url="{{ deployUrlPrepared }}">
+                <div class="commit-buttons" id="commit-buttons" data-deploy-url="{{ deployUrlPrepared }}" data-mark-url="{{ markUrlPrepared }}">
                     <div class="btn-group" id="button-commit-deploy" style="display:none;">
                         <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
                             <span class="caret"></span>
