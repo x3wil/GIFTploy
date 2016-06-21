@@ -2,6 +2,15 @@
 
 namespace GIFTploy\Deployer;
 
+use Entity\Environment;
+use GIFTploy\Filesystem\FilesystemBuilder;
+use GIFTploy\Filesystem\ServerInterface;
+use GIFTploy\Git\Commit;
+use GIFTploy\Git\Diff;
+use GIFTploy\Git\Parser\DiffParser;
+use GIFTploy\Git\Parser\LogParser;
+use GIFTploy\Git\Repository;
+
 /**
  * Description of Assembler
  *
@@ -18,12 +27,15 @@ class Assembler
      */
     private $deployer;
 
-    public function __construct(\Entity\Environment $environment, \GIFTploy\Filesystem\ServerInterface $server, \GIFTploy\Git\Repository $workingTree)
-    {
+    public function __construct(
+        Environment $environment,
+        ServerInterface $server,
+        Repository $workingTree
+    ) {
         $this->environment = $environment;
         $this->server = $server;
         $this->workingTree = $workingTree;
-        $this->deployer = new Deployer(new \GIFTploy\Filesystem\FilesystemBuilder($workingTree, $server));
+        $this->deployer = new Deployer(new FilesystemBuilder($workingTree, $server));
     }
 
     public function getEnvironment()
@@ -46,7 +58,7 @@ class Assembler
         return $this->deployer;
     }
 
-    public function getFilesFromDiff(array $diffFiles, \GIFTploy\Git\Commit $firstCommit = null)
+    public function getFilesFromDiff(array $diffFiles, Commit $firstCommit = null)
     {
         $files = [
             'copy' => [],
@@ -61,8 +73,7 @@ class Assembler
             }
         }
 
-        if ($firstCommit !== null)
-        {
+        if ($firstCommit !== null) {
             $filesDiff = array_diff($firstCommit->getFiles()['create'], $files['delete']);
             $files['copy'] = array_unique(array_merge($files['copy'], $filesDiff));
             $files['delete'] = [];
@@ -73,10 +84,10 @@ class Assembler
 
     public function getDiffFileStack($commitHash)
     {
-        $firstCommit = $this->getWorkingTree()->getFirstCommit(new \GIFTploy\Git\Parser\LogParser());
+        $firstCommit = $this->getWorkingTree()->getFirstCommit(new LogParser());
         $lastDeployedRevision = $this->deployer->fetchLastDeployedRevision();
 
-        $diff = new \GIFTploy\Git\Diff($this->getWorkingTree(), new \GIFTploy\Git\Parser\DiffParser());
+        $diff = new Diff($this->getWorkingTree(), new DiffParser());
         $diffFiles = $diff->setCommitHashFrom(($lastDeployedRevision ? $lastDeployedRevision : $firstCommit->getCommitHash()))
             ->setCommitHashTo($commitHash)
             ->getFiles([], true);

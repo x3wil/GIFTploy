@@ -5,10 +5,10 @@ namespace Form;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EnvironmentFormType extends AbstractType
 {
@@ -18,17 +18,30 @@ class EnvironmentFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('title', null, ['label' => 'form.environment.title', 'attr' => ['placeholder' => 'form.environment.title']])
-        ;
+            ->add('title', null, [
+                'label' => 'form.environment.title',
+                'attr' => [
+                    'placeholder' => 'form.environment.title',
+                ],
+            ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
             $environment = $event->getData();
             $form = $event->getForm();
 
             if (!$environment->isNew()) {
-                $form->add('branch', null, ['label' => 'form.environment.branch', 'attr' => ['placeholder' => 'form.environment.branch'], 'disabled' => true]);
+                $form->add('branch', null, [
+                    'label' => 'form.environment.branch',
+                    'attr' => ['placeholder' => 'form.environment.branch'],
+                    'disabled' => true,
+                ]);
             } else {
-                $form->add('branch', null, ['label' => 'form.environment.branch', 'attr' => ['placeholder' => 'form.environment.branch']]);
+                $form->add('branch', null, [
+                    'label' => 'form.environment.branch',
+                    'attr' => [
+                        'placeholder' => 'form.environment.branch',
+                    ],
+                ]);
             }
         });
     }

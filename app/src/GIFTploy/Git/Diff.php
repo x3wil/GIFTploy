@@ -2,6 +2,8 @@
 
 namespace GIFTploy\Git;
 
+use GIFTploy\Git\Parser\Parser;
+
 /**
  * Class for set up and return parsed diff.
  *
@@ -13,14 +15,14 @@ class Diff
     /**
      * Instance of Repository.
      *
-     * @var Repository
+     * @var \GIFTploy\Git\Repository
      */
     protected $repository;
 
     /**
      * Instance of Parser.
      *
-     * @var Parser
+     * @var \GIFTploy\Git\Parser\
      */
     protected $parser;
 
@@ -28,16 +30,16 @@ class Diff
      * @var string
      */
     protected $commitHashFrom;
-    
+
     /**
      * @var string
      */
     protected $commitHashTo;
 
     /**
-     * @param Repository $respository
+     * @param \GIFTploy\Git\Repository $respository
      */
-    public function __construct(Repository $respository, Parser\Parser $parser)
+    public function __construct(Repository $respository, Parser $parser)
     {
         $this->repository = $respository;
         $this->parser = $parser;
@@ -57,7 +59,7 @@ class Diff
      * Sets commit hash from where to get diff.
      *
      * @param string $hash
-     * @return Diff
+     * @return \GIFTploy\Git\Diff
      */
     public function setCommitHashFrom($hash)
     {
@@ -70,6 +72,7 @@ class Diff
      * Returns starting commit hash.
      *
      * @param string
+     * @return string
      */
     public function getCommitHashFrom()
     {
@@ -80,7 +83,7 @@ class Diff
      * Sets commit hash where to get diff.
      *
      * @param string $hash
-     * @return Diff
+     * @return \GIFTploy\Git\Diff
      */
     public function setCommitHashTo($hash)
     {
@@ -93,6 +96,7 @@ class Diff
      * Returns ending commit hash.
      *
      * @param string
+     * @return string
      */
     public function getCommitHashTo()
     {
@@ -102,9 +106,9 @@ class Diff
     /**
      * Returns array of files whit diff informations.
      *
-     * @param array $args   Additional arguments for log command.
-     * @param type $asArray Returns array if TRUE, instance of Generator otherwise,
-     * @return array|Generator
+     * @param array $args Additional arguments for log command.
+     * @param bool $asArray Returns array if TRUE, instance of Generator otherwise,
+     * @return array|\Generator
      */
     public function getFiles(array $args = [], $asArray = false)
     {

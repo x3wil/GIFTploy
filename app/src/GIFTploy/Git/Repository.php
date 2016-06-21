@@ -2,6 +2,8 @@
 
 namespace GIFTploy\Git;
 
+use Symfony\Component\Process\Process;
+
 /**
  * Class for managing single repository.
  *
@@ -28,7 +30,7 @@ class Repository
      * Constructs a repository.
      * If directory is not exists or is not git directory, throws exception.
      *
-     * @param type $dir
+     * @param string $dir
      */
     public function __construct($dir)
     {
@@ -38,15 +40,15 @@ class Repository
     /**
      * Checks and sets valid git directory.
      *
-     * @param type $dir     Working directory path
-     * 
-     * @throws Exception    Directory is not exists or is not git directory
+     * @param string $dir Working directory path
+     *
+     * @throws \Exception    Directory is not exists or is not git directory
      */
     protected function initDir($dir)
     {
         if (!is_dir($dir.'/.git')) {
             throw new \Exception('Directory "'.$dir.'" is not valid GIT directory.');
-        } else if (!is_dir($dir)) {
+        } elseif (!is_dir($dir)) {
             throw new \Exception('Directory "'.$dir.'" does not exist.');
         }
 
@@ -66,10 +68,10 @@ class Repository
     /**
      * Run process scoped to this repository by setting --git-dir and --work-tree.
      *
-     * @param type $command Command to execute
-     * @param array $args   Additional arguments
-     * 
-     * @return type     Running process
+     * @param string $command Command to execute
+     * @param array $args Additional arguments
+     *
+     * @return Process     Running process
      */
     public function run($command, array $args = [])
     {
@@ -100,7 +102,7 @@ class Repository
      * Returns instance of Commit by given commit hash.
      * Method looks to $this->commits first and then return new instance of Commit if does not exist.
      *
-     * @param type $commitHash  Commit hash
+     * @param string $commitHash Commit hash
      * @return Commit
      */
     public function getCommit($commitHash)
@@ -113,16 +115,16 @@ class Repository
      *
      * @return Commit
      */
-	public function getFirstCommit(Parser\Parser $parser)
-	{
+    public function getFirstCommit(Parser\Parser $parser)
+    {
         $log = $this->getLog($parser);
-        
+
         $commits = $log->getCommits([
             '--reverse',
         ]);
 
         return current($commits);
-	}
+    }
 
     public function checkout($commitHash)
     {

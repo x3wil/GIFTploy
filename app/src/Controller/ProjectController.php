@@ -2,6 +2,12 @@
 
 namespace Controller;
 
+use Entity\Environment;
+use Entity\Repository;
+use Form\EnvironmentFormType;
+use Form\RepositoryFormType;
+use GIFTploy\Git\Commit;
+use GIFTploy\Git\Diff;
 use Silicone\Route;
 use Silicone\Controller;
 use GIFTploy\Git\Git;
@@ -27,11 +33,11 @@ class ProjectController extends Controller
         $repositoryObj = $this->app->entityManager()->getRepository('Entity\Repository')->find(intval($id));
 
         if (!$repositoryObj) {
-            $repositoryObj = new \Entity\Repository();
+            $repositoryObj = new Repository();
             $repositoryObj->setEnabled(true);
         }
 
-        $form = $this->app->formType(new \Form\RepositoryFormType(), $repositoryObj);
+        $form = $this->app->formType(new RepositoryFormType(), $repositoryObj);
 
         if ($this->request->isMethod('POST')) {
             $form->bind($this->request);
@@ -52,6 +58,7 @@ class ProjectController extends Controller
         ]);
 
         $response->setSharedMaxAge(5);
+
         return $response;
     }
 
@@ -65,12 +72,12 @@ class ProjectController extends Controller
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($id));
 
         if (!$environmentObj) {
-            $environmentObj = new \Entity\Environment();
+            $environmentObj = new Environment();
             $environmentObj->setRepository($repositoryObj);
             $environmentObj->setEnabled(true);
         }
 
-        $form = $this->app->formType(new \Form\EnvironmentFormType(), $environmentObj);
+        $form = $this->app->formType(new EnvironmentFormType(), $environmentObj);
 
         if ($this->request->isMethod('POST')) {
             $form->bind($this->request);
@@ -91,6 +98,7 @@ class ProjectController extends Controller
         ]);
 
         $response->setSharedMaxAge(5);
+
         return $response;
     }
 
@@ -126,7 +134,7 @@ class ProjectController extends Controller
             $lastDeployedRevision = $deployer->fetchLastDeployedRevision();
         }
 
-        $commits = $gitRepository->getLog(new LogParser())->getCommits([], true);
+        $commits = $gitRepository->getLog(new LogParser())->getCommits();
 
         $deployUrlPrepared = ($server !== null ? $this->app->url('deploy', [
             'environmentId' => $environmentObj->getId(),
@@ -154,7 +162,7 @@ class ProjectController extends Controller
         ]);
     }
 
-    public function showCommitDetail(\GIFTploy\Git\Commit $commit)
+    public function showCommitDetail(Commit $commit)
     {
         return $this->render('Repository/_show-commit-detail.twig', [
             'commit' => $commit,
@@ -169,8 +177,8 @@ class ProjectController extends Controller
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
         $gitRepository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $diff = new \GIFTploy\Git\Diff($gitRepository, new DiffParser());
-        
+        $diff = new Diff($gitRepository, new DiffParser());
+
         $diffFiles = $diff->setCommitHashFrom($commitHashFrom)
             ->setCommitHashTo($commitHashTo)
             ->getFiles([], true);
@@ -187,9 +195,7 @@ class ProjectController extends Controller
      */
     public function cloneRepository($repositoryId)
     {
-//        ddd($repositoryId, $this->request->get("console"));
-
-        $p = Git::cloneRepository('c:/www/aaaaaaaaaaaaaaaaaaaaa/', 'https://github.com/jasny/bootstrap.git', [], [], new ProcessConsole);
+        $p = Git::cloneRepository('c:/www/aaaaaaaaaaaaaaaaaaaaa/', 'https://github.com/jasny/bootstrap.git', [], new ProcessConsole());
         d($p);
 
         dd($this->request);

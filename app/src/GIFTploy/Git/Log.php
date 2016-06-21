@@ -2,6 +2,9 @@
 
 namespace GIFTploy\Git;
 
+use GIFTploy\Git\Parser\LogParser;
+use GIFTploy\Git\Parser\Parser;
+
 /**
  * Class for set up and return parsed log.
  *
@@ -41,7 +44,7 @@ class Log
     /**
      * @param Repository $respository
      */
-    public function __construct(Repository $respository, Parser\Parser $parser)
+    public function __construct(Repository $respository, Parser $parser)
     {
         $this->repository = $respository;
         $this->parser = $parser;
@@ -61,7 +64,7 @@ class Log
      * Sets log limit.
      *
      * @param integer $limit
-     * 
+     *
      * @return Log
      */
     public function setLimit($limit)
@@ -78,7 +81,7 @@ class Log
      */
     public function getLimit()
     {
-        return (int) $this->limit;
+        return (int)$this->limit;
     }
 
     /**
@@ -102,14 +105,14 @@ class Log
      */
     public function getOffset()
     {
-        return (int) $this->offset;
+        return (int)$this->offset;
     }
 
     /**
      * Returns commit data for single commit from log.
      *
-     * @param string $commitHash    Commit hash
-     * 
+     * @param string $commitHash Commit hash
+     *
      * @return array
      */
     public function getCommitData($commitHash)
@@ -127,9 +130,9 @@ class Log
     /**
      * Returns single instance of Commit from log.
      *
-     * @param string $commitHash    Commit hash
+     * @param string $commitHash Commit hash
      *
-     * @return Commit
+     * @return \GIFTploy\Git\Commit
      */
     public function getCommit($commitHash)
     {
@@ -164,8 +167,8 @@ class Log
     /**
      * Prepare and run process for log command and returns instance of LogParser.
      *
-     * @param array $args   Additional arguments for log command.
-     * @return LogParser
+     * @param array $args Additional arguments for log command.
+     * @return \GIFTploy\Git\Parser\LogParser
      */
     protected function getParserOutput(array $args = [])
     {
@@ -173,7 +176,7 @@ class Log
             '--numstat',
             '--summary',
             '--pretty=format:COMMITSTART%H%n%h%n%P%n%aN%n%ae%n%ct%n%s%n%b%nENDOFOUTPUTGITMESSAGE',
-            ], $args);
+        ], $args);
 
         return $this->repository->run('log', $logArgs)->getOutput();
     }

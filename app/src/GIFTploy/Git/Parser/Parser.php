@@ -14,7 +14,8 @@ interface Parser
      * Parse raw git output.
      *
      * @param string $rawLog
-     * @return Generator
+     * @return \Generator
      */
     public function parse($rawLog);
+
 }

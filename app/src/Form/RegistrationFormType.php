@@ -19,24 +19,24 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('username', null, array('label' => 'form.name'))
-            ->add('email', 'email', array('label' => 'form.email'))
-            ->add('password', 'repeated', array(
+            ->add('username', null, ['label' => 'form.name'])
+            ->add('email', 'email', ['label' => 'form.email'])
+            ->add('password', 'repeated', [
                 'type' => 'password',
-                'options' => array(),
-                'first_options' => array('label' => 'form.password'),
-                'second_options' => array('label' => 'form.password_confirmation'),
+                'options' => [],
+                'first_options' => ['label' => 'form.password'],
+                'second_options' => ['label' => 'form.password_confirmation'],
                 'invalid_message' => 'user.password.mismatch',
-            ));
+            ]);
     }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
+        $resolver->setDefaults([
             'data_class' => $this->class,
-            'intention'  => 'registration',
-            'validation_groups' => array('Registration'),
-        ));
+            'intention' => 'registration',
+            'validation_groups' => ['Registration'],
+        ]);
     }
 
     public function getName()

@@ -33,7 +33,7 @@ class Commit
     /**
      * Parent commit hash.
      *
-     * @var type
+     * @var string
      */
     protected $parentHash;
 
@@ -76,9 +76,9 @@ class Commit
      * Constructs a commit.
      * If commit data is not given, constructor will fetch them from log.
      *
-     * @param Repository $repository    Instance of Repository
-     * @param type $commitHash          Commit hash
-     * @param array $data               Optional given commit data
+     * @param Repository $repository Instance of Repository
+     * @param string $commitHash Commit hash
+     * @param array $data Optional given commit data
      */
     public function __construct(Repository $repository, $commitHash, array $data = [])
     {
@@ -95,7 +95,7 @@ class Commit
     /**
      * Sets commit data from given array.
      *
-     * @param array $data   Array of commit data where keys are Commit class properties
+     * @param array $data Array of commit data where keys are Commit class properties
      *
      * @return Commit
      */

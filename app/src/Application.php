@@ -9,7 +9,7 @@ class Application extends Silicone\Application
     protected function configure()
     {
         $app = $this;
-        require_once $app->getRootDir() . '/config/dev.php';
+        require_once $app->getRootDir().'/config/dev.php';
     }
 
     /**
@@ -76,7 +76,7 @@ class Application extends Silicone\Application
     /**
      * Encodes the raw password.
      *
-     * @param UserInterface $user     A UserInterface instance
+     * @param UserInterface $user A UserInterface instance
      * @param string $password The password to encode
      *
      * @return string The encoded password
@@ -95,7 +95,7 @@ class Application extends Silicone\Application
     public function getProjectsDir()
     {
         static $dir;
-        
+
         if (empty($dir)) {
             $dir = $this->getRootDir().'/projects';
 
@@ -103,7 +103,7 @@ class Application extends Silicone\Application
                 mkdir($dir, 0755, true);
             }
         }
-        
+
         return $dir;
     }
 }

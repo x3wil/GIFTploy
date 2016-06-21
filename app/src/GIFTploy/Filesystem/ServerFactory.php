@@ -2,6 +2,8 @@
 
 namespace GIFTploy\Filesystem;
 
+use Doctrine\ORM\EntityManager;
+
 /**
  * Factory class for server types.
  *
@@ -18,7 +20,7 @@ class ServerFactory
      */
     protected $entityManager;
 
-    public function __construct(\Doctrine\ORM\EntityManager $entityManager)
+    public function __construct(EntityManager $entityManager)
     {
         $this->entityManager = $entityManager;
     }
@@ -27,9 +29,9 @@ class ServerFactory
      * Finds and returns right type of server instance.
      * If $typeId is null, empty instance is returned.
      *
-     * @param string $type      Type of server
-     * @param integer $typeId   Server ID
-     * @return ServerInterface|null
+     * @param string $type Type of server
+     * @param integer $typeId Server ID
+     * @return \GIFTploy\Filesystem\ServerInterface|null
      */
     public function create($type, $typeId = null)
     {
@@ -41,8 +43,8 @@ class ServerFactory
 
         if (isset($repositoryName)) {
             $respository = $this->entityManager
-                    ->getRepository($repositoryName)
-                    ->find($typeId);
+                ->getRepository($repositoryName)
+                ->find($typeId);
 
             return ($respository ? $respository : new $repositoryName());
         }

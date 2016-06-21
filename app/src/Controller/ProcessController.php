@@ -2,15 +2,12 @@
 
 namespace Controller;
 
+use Entity\Environment;
+use GIFTploy\Deployer\Assembler;
 use Silicone\Route;
 use Silicone\Controller;
 use GIFTploy\Git\Git;
-use GIFTploy\Deployer\Deployer;
-use GIFTploy\Filesystem\FilesystemBuilder;
 use GIFTploy\Filesystem\ServerFactory;
-use GIFTploy\Git\Parser\DiffParser;
-use GIFTploy\Git\Parser\LogParser;
-use GIFTploy\Deployer\FileStack;
 use GIFTploy\ProcessConsole;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -25,6 +22,7 @@ class ProcessController extends Controller
      */
     public function deploy($environmentId, $serverFactoryId, $commitHash)
     {
+        /* @var \Entity\Environment $environmentObj */
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
         $serverFactory = $this->app->entityManager()
             ->getRepository('Entity\ServerFactory')
@@ -36,13 +34,13 @@ class ProcessController extends Controller
         $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
         $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $assembler = new \GIFTploy\Deployer\Assembler($environmentObj, $server, $workingTree);
+        $assembler = new Assembler($environmentObj, $server, $workingTree);
         $deployer = $assembler->getDeployer();
         $fileStack = $assembler->getDiffFileStack($commitHash);
         $console = new ProcessConsole();
 
         $workingTree->checkout($commitHash);
-        $deployer->deploy($fileStack, function($file, $mode, $result, $errorMessage) use ($console) {
+        $deployer->deploy($fileStack, function ($file, $mode, $result, $errorMessage) use ($console) {
 
             if ($result === null) {
                 $msg = ($mode == 'delete' ? 'Deleting file: ' : 'Uploading file: ');
@@ -67,6 +65,7 @@ class ProcessController extends Controller
      */
     public function mark($environmentId, $serverFactoryId, $commitHash)
     {
+        /* @var \Entity\Environment $environmentObj */
         $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
         $serverFactory = $this->app->entityManager()
             ->getRepository('Entity\ServerFactory')
@@ -78,11 +77,14 @@ class ProcessController extends Controller
         $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
         $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
 
-        $assembler = new \GIFTploy\Deployer\Assembler($environmentObj, $server, $workingTree);
+        $assembler = new Assembler($environmentObj, $server, $workingTree);
         $deployer = $assembler->getDeployer();
 
         $deployer->writeLastDeployedRevision($commitHash);
 
-        return $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRepository()->getId(), 'environmentId' => $environmentObj->getId()]));
+        return $this->app->redirect($this->app->url('environment-show', [
+            'repositoryId' => $environmentObj->getRepository()->getId(),
+            'environmentId' => $environmentObj->getId(),
+        ]));
     }
 }

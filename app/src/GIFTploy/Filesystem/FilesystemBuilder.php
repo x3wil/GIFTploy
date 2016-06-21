@@ -2,6 +2,11 @@
 
 namespace GIFTploy\Filesystem;
 
+use GIFTploy\Git\Repository;
+use League\Flysystem\Adapter\Local;
+use League\Flysystem\Filesystem;
+use League\Flysystem\MountManager;
+
 /**
  * Class for creating Flysystem manager.
  *
@@ -35,12 +40,12 @@ class FilesystemBuilder
      * @param \GIFTploy\Git\Repository $repository
      * @param \GIFTploy\Filesystem\ServerInterface $server
      */
-    public function __construct(\GIFTploy\Git\Repository $repository, ServerInterface $server)
+    public function __construct(Repository $repository, ServerInterface $server)
     {
         $this->repository = $repository;
         $this->server = $server;
-        
-        $this->localAdapter = new \League\Flysystem\Adapter\Local($repository->getDir());
+
+        $this->localAdapter = new Local($repository->getDir());
         $this->remoteAdapter = $server->getAdapter();
     }
 
@@ -51,9 +56,9 @@ class FilesystemBuilder
      */
     public function getManager()
     {
-        return new \League\Flysystem\MountManager([
-            'local' => new \League\Flysystem\Filesystem($this->localAdapter),
-            'remote' => new \League\Flysystem\Filesystem($this->remoteAdapter),
+        return new MountManager([
+            'local' => new Filesystem($this->localAdapter),
+            'remote' => new Filesystem($this->remoteAdapter),
         ]);
     }
 
@@ -70,7 +75,7 @@ class FilesystemBuilder
     /**
      * Returns entity instance of server.
      *
-     * @return ServerInterface
+     * @return \GIFTploy\Filesystem\ServerInterface
      */
     public function getServer()
     {

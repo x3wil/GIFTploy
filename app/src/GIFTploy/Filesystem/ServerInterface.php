@@ -13,4 +13,5 @@ interface ServerInterface
     public function getConfiguration();
 
     public function getAdapter();
+
 }

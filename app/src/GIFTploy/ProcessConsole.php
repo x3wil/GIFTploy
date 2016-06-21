@@ -67,7 +67,7 @@ class ProcessConsole
         if ($message != '') {
             if ($result === true) {
                 $output .= sprintf('<span class="true">%s</span>', $message);
-            } else if ($result === false) {
+            } elseif ($result === false) {
                 $output .= sprintf('<span class="false">%s</span>', $message);
             } else {
                 $message = sprintf('[%s] %s', date('Y-m-d H:i:s'), $message);
@@ -102,11 +102,6 @@ class ProcessConsole
         $message = ($result ? 'OK' : 'Error ('.$errorMessage.')');
 
         return $this->flushProgress($message, $result, $onNewLine);
-    }
-
-    public function flushNewLine()
-    {
-        return $this->flush('');
     }
 
 }

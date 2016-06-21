@@ -2,6 +2,9 @@
 
 namespace GIFTploy\Deployer;
 
+use GIFTploy\Filesystem\FilesystemBuilder;
+use League\Flysystem\FileNotFoundException;
+
 /**
  * Class for managing deployment and revision controll on server.
  *
@@ -32,7 +35,7 @@ class Deployer
      *
      * @param \GIFTploy\Filesystem\FilesystemBuilder $filesystemBuilder
      */
-    public function __construct(\GIFTploy\Filesystem\FilesystemBuilder $filesystemBuilder)
+    public function __construct(FilesystemBuilder $filesystemBuilder)
     {
         $this->filesystemBuilder = $filesystemBuilder;
         $this->manager = $filesystemBuilder->getManager();
@@ -47,7 +50,7 @@ class Deployer
     {
         try {
             $revision = $this->manager->read('remote://'.self::LAST_DEPLOY_FILE);
-        } catch (\League\Flysystem\FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             $revision = null;
         }
 
@@ -100,15 +103,16 @@ class Deployer
      * Copy file to server.
      *
      * @param string $file
-     * @param string $error     Passed by reference.
+     * @param string $error Passed by reference.
      * @return boolean
      */
     protected function copyToRemote($file, &$error = null)
     {
         try {
             return $this->manager->put('remote://'.$file, $this->manager->read('local://'.$file));
-        } catch (\League\Flysystem\FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             $error = $e->getMessage();
+
             return false;
         }
     }
@@ -117,15 +121,16 @@ class Deployer
      * Delete file from server.
      *
      * @param string $file
-     * @param string $error     Passed by reference.
+     * @param string $error Passed by reference.
      * @return boolean
      */
     protected function deleteFromRemote($file, &$error = null)
     {
         try {
             return $this->manager->delete('remote://'.$file);
-        } catch (\League\Flysystem\FileNotFoundException $e) {
+        } catch (FileNotFoundException $e) {
             $error = $e->getMessage();
+
             return false;
         }
     }

@@ -2,6 +2,8 @@
 
 namespace Controller;
 
+use Entity\ServerFtp;
+use Form\ServerFtpFormType;
 use Silicone\Route;
 use Silicone\Controller;
 
@@ -26,11 +28,11 @@ class ServerController extends Controller
         $serverFtpObj = $this->app->entityManager()->getRepository('Entity\ServerFtp')->find(intval($id));
 
         if (!$serverFtpObj) {
-            $serverFtpObj = new \Entity\ServerFtp();
+            $serverFtpObj = new ServerFtp();
             $serverFtpObj->setEnabled(true);
         }
 
-        $form = $this->app->formType(new \Form\ServerFtpFormType(), $serverFtpObj);
+        $form = $this->app->formType(new ServerFtpFormType(), $serverFtpObj);
 
         if ($this->request->isMethod('POST')) {
             $form->bind($this->request);
@@ -51,6 +53,7 @@ class ServerController extends Controller
         ]);
 
         $response->setSharedMaxAge(5);
+
         return $response;
     }
 }

@@ -12,11 +12,12 @@ class IndexController extends Controller
      */
     public function projectList()
     {
+        /* @var \Entity\RepositoryRepository $repository */
         $repository = $this->app->entityManager()->getRepository('Entity\Repository');
 
-		return $this->render("Default/project-list.twig", [
-			"repositories" => $repository->getItemsQuery()->getQuery()->getResult(),
-		]);
+        return $this->render("Default/project-list.twig", [
+            "repositories" => $repository->getItemsQuery()->getQuery()->getResult(),
+        ]);
     }
 
 
@@ -35,14 +36,14 @@ class IndexController extends Controller
     /**
      * @Route("/process-console", name="process-console")
      */
-	public function consoleOutputAction()
-	{
-		$url = $this->request->get('url', null);
-		$title = $this->request->get('title', null);
+    public function consoleOutputAction()
+    {
+        $url = $this->request->get('url', null);
+        $title = $this->request->get('title', null);
 
-		return $this->render("Default/console.twig", [
-			"url" => $url,
-			"title" => $title
-		]);
-	}
+        return $this->render("Default/console.twig", [
+            "url" => $url,
+            "title" => $title,
+        ]);
+    }
 }

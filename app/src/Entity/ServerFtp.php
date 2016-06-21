@@ -3,6 +3,7 @@
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use League\Flysystem\Adapter\Ftp;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -461,6 +462,6 @@ class ServerFtp implements ServerInterface
      */
     public function getAdapter()
     {
-        return new \League\Flysystem\Adapter\Ftp($this->getConfiguration());
+        return new Ftp($this->getConfiguration());
     }
 }

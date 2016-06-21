@@ -13,7 +13,7 @@ class LogParser implements Parser
     /**
      * Explode raw log by commits and returns by a single commit data.
      *
-     * @return Generator
+     * @return \Generator
      */
     public function parse($rawLog)
     {
@@ -32,8 +32,8 @@ class LogParser implements Parser
     /**
      * Parse raw log of a single commit and returns its data.
      *
-     * @param string $rawCommitLog  Raw log of single commit
-     * 
+     * @param string $rawCommitLog Raw log of single commit
+     *
      * @return array
      */
     protected function parseCommitLog($rawCommitLog)
@@ -56,7 +56,7 @@ class LogParser implements Parser
     /**
      * Removes and returns first line of raw log.
      *
-     * @param array $lines  Raw commit log passed by reference
+     * @param array $lines Raw commit log passed by reference
      * @return string
      */
     protected function shiftLine(&$lines)
@@ -67,8 +67,8 @@ class LogParser implements Parser
     /**
      * Removes first line of raw log and returns as DateTime object.
      *
-     * @param array $lines  Raw commit log passed by reference
-     * @return DateTime
+     * @param array $lines Raw commit log passed by reference
+     * @return \DateTime
      */
     protected function shiftDate(&$lines)
     {
@@ -80,7 +80,7 @@ class LogParser implements Parser
     /**
      * Removes and returns commit message from couple of lines of raw log.
      *
-     * @param array $lines  Raw commit log passed by reference
+     * @param array $lines Raw commit log passed by reference
      * @return string
      */
     protected function shiftMessage(&$lines)
@@ -103,7 +103,7 @@ class LogParser implements Parser
      * Extract files from raw log and returns as array.
      * Files are sorted by mode: create, delete and modify.
      *
-     * @param string $commitLog   Raw commit log
+     * @param string $commitLog Raw commit log
      * @return array
      */
     protected function shiftFiles($commitLog)
