@@ -128,6 +128,18 @@ class ProjectController extends Controller
 
         $commits = $gitRepository->getLog(new LogParser())->getCommits([], true);
 
+        $deployUrlPrepared = ($server !== null ? $this->app->url('deploy', [
+            'environmentId' => $environmentObj->getId(),
+            'serverFactoryId' => $serverDefault->getId(),
+            'commitHash' => 'commitHash',
+        ]) : null);
+
+        $markUrlPrepared = ($server !== null ? $this->app->url('mark', [
+            'environmentId' => $environmentObj->getId(),
+            'serverFactoryId' => $serverDefault->getId(),
+            'commitHash' => 'commitHash',
+        ]) : null);
+
         return $this->render('Repository/show-environment.twig', [
             'repositoryObj' => $repositoryObj,
             'environmentObj' => $environmentObj,
@@ -137,16 +149,8 @@ class ProjectController extends Controller
             'serverFactory' => $serverDefault,
             'server' => $server,
             'lastDeployedRevision' => $lastDeployedRevision,
-            'deployUrlPrepared' => $this->app->url('deploy', [
-                'environmentId' => $environmentObj->getId(),
-                'serverFactoryId' => $serverDefault->getId(),
-                'commitHash' => 'commitHash',
-            ]),
-            'markUrlPrepared' => $this->app->url('mark', [
-                'environmentId' => $environmentObj->getId(),
-                'serverFactoryId' => $serverDefault->getId(),
-                'commitHash' => 'commitHash',
-            ]),
+            'deployUrlPrepared' => $deployUrlPrepared,
+            'markUrlPrepared' => $markUrlPrepared,
         ]);
     }
 

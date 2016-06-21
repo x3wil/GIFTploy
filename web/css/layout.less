@@ -175,7 +175,7 @@
     width: 50px;
     height: 40px;
     text-align: center;
-    font-size: 10px;
+    font-size: 0px;
 
     & > div {
         display: inline-block;
@@ -204,3 +204,40 @@
 }
 
 .lh-keyframes(~'sk-stretchdelay, 0%, 40%, 100%{ transform: scaleY(0.4); background-color: #333; } 20%{ transform: scaleY(1.0); background-color: #DD4B39; }');
+
+body > .modal {
+    .modal-body {
+        &.console {
+            padding: 0;
+
+            .panel {
+                margin-bottom: 0;
+                padding: 0;
+                border: 0px solid;
+                .lh-box-shadow(none);
+
+                .panel-body {
+                    padding: 0;
+                }
+            }
+        }
+
+        .spinner {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .modal-footer {
+        &.console {
+            border-top: 0px solid;
+        }
+
+        .spinner {
+            float: left;
+            margin-top: 0px;
+            margin-bottom: 0px;
+        }
+    }
+}
+

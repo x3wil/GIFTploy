@@ -1,8 +1,7 @@
 /**
  * DATA TABLES
  */
-(function($)
-{
+$(function() {
     window.$commitListTable = $('#commits-list table');
     window.$commitListTable.DataTable({
         'info': false,
@@ -24,13 +23,13 @@
         'order': [[ 2, 'desc' ]]
     });
 
-}(jQuery));
+});
 
 
 /**
  * Layout of commit list
  */
-(function($) {
+$(function() {
     window.contentWrapper = $('.content-wrapper');
     window.contentHeader = $('.content-header', window.contentWrapper);
     window.content = $('.content', window.contentWrapper);
@@ -127,7 +126,7 @@
         }
     });
 
-}(jQuery));
+});
 
 function setCommitButtons(row)
 {
@@ -141,7 +140,7 @@ function setCommitButtons(row)
     deployUrl = deployUrl.replace('commitHash', row.data('commit-hash'));
     markUrl = markUrl.replace('commitHash', row.data('commit-hash'));
 
-    $('a.deploy-link', $commitButtons).attr('href', deployUrl);
+    $('a.deploy-link', $commitButtons).attr('href', deployUrl).data('modal-title', 'Deploying ' + row.data('commit-hash'));
     $('a.mark-link', $commitButtons).attr('href', markUrl);
 
     if (isDeployed === 1) {
@@ -153,9 +152,14 @@ function setCommitButtons(row)
     }
 }
 
+function getSpinner()
+{
+    return $('<div class="spinner"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>');
+}
+
 function addSpinner(container)
 {
-    container.append('<div class="spinner"><div class="rect1"></div><div class="rect2"></div><div class="rect3"></div><div class="rect4"></div><div class="rect5"></div></div>');
+    container.append(getSpinner());
 }
 
 function Ajax()
@@ -212,80 +216,6 @@ function Ajax()
 }
 
 
-
-
-var Ajaxa = {
-	loadContent: function(url, data, container, callback, method, replace)
-	{
-		container = container || null;
-		method = method || "GET";
-
-		if (replace !== false)
-			replace = true;
-
-//		if (container)
-//			Layout.setSpinner(container);
-
-		var formAjaxXhr = $.ajax(
-		{
-			type: method,
-			url: url,
-			data: data,
-			dataType: "json",
-			async: false
-		});
-
-		formAjaxXhr.done(function(response)
-		{
-			if (container)
-			{
-				if (replace)
-					container.html(response.html);
-				else
-					container.append(response.html);
-
-				Layout.removeSpinner(container);
-			}
-
-			if (typeof callback === "function")
-				callback(response);
-		});
-
-		formAjaxXhr.fail(function()
-		{
-//			alert("error");
-		});
-
-		return formAjaxXhr;
-	}
-};
-
-
-
-
-$(document).ready(function()
-{
-//	$('[data-toggle=tooltip]').tooltip()
-//
-//	$('#tableDefaultList").DataTable({
-//		"paging": false,
-//		"info": false,
-//		"order": [
-//			[ 0, "asc" ]
-//		],
-//		"columnDefs": [
-//			{
-//				orderable: false,
-//				targets: -1
-//			}
-//		]
-//	});
-//
-//	formServerTestConnection();
-//	formRepositoryTestConnection();
-
-//    modal("/repository/clone/2?console=1", "Cloning repository");
-});
 
 
 function formRepositoryTestConnection()
@@ -468,140 +398,65 @@ function formServerTestConnection()
 	}
 }
 
-
 function modal(url, title)
 {
-	var consoleReturn = false;
+	var isProcess = false;
 
-	if (url.indexOf("console=1") > 0)
-	{
-		url = "/process-console?title="+ encodeURIComponent(title) +"&url="+ encodeURIComponent(url);
-		consoleReturn = true;
-	}
+    if (url.indexOf("/process/") !== -1) {
+        url = "/process-console?title="+ encodeURIComponent(title) +"&url="+ encodeURIComponent(url);
+		isProcess = true;
+    }
 
-	var isInline = url.indexOf("#") === 0;
+    var modalContent = '' +
+        '<div class="modal fade" tabindex="-1" role="dialog">' +
+            '<div class="modal-dialog modal-lg">' +
+                '<div class="modal-content">' +
+                    '<div class="modal-body">' + getSpinner()[0].outerHTML + '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
 
-	if (url !== null)
-	{
-		var modalContent = '\
-			<div class="modal fade" id="modal">\n\
-				<div class="modal-dialog modal-lg">\n\
-					<div class="modal-content">\n\
-						<div class="modal-header">\n\
-							<span class="c-ico-modal-close" data-dismiss="modal"></span>\n\
-							<strong class="modal-title">'+ title +'</strong>\n\
-						</div>\n\
-						<div class="modal-body">\n\
-							<div style="padding: 50px 0; text-align: center;">\n\
-								<img src="/images/ajax_loader.gif" alt="">\n\
-							</div>\n\
-						</div>\n\
-					</div>\n\
-				</div>\n\
-			</div>';
-
-
-		var mo = $(modalContent);
-		mo.appendTo($('body'));
-		mo.one('hidden.bs.modal', function() {
-			return mo.off().remove();
-		});
-		mo.modal();
-
-		mo.on("hide.bs.modal", function()
-		{
-			var previousModal = mo.prevAll(".modal:first");
-
-			if (previousModal.length > 0)
-			{
-				previousModal.show();
-				previousModal.next().show();
-			}
-		});
-
-		mo.on("shown.bs.modal", function()
-		{
-			if (consoleReturn)
-			{
-				$("#modal .modal-footer [data-dismiss]").addClass("disabled");
-			}
-		});
-
-		if (isInline)
-		{
-			var inline = $(url);
-
-			if (inline.length > 0)
-			{
-				return mo.find('.modal-body').html(inline.html());
-			}
-			else
-			{
-				return mo.find('.modal-body').html('Loading content failed.');
-			}
+    var mo = $(modalContent);
+    mo.appendTo($('body'));
+    mo.one('hidden.bs.modal', function() {
+		if (isProcess) {
+			window.location.reload();
 		}
-		else
-		{
-			var previousModal = mo.prevAll(".modal:first");
 
-			if (previousModal.length > 0)
-			{
-				previousModal.hide();
-				previousModal.next().hide();
-			}
+        return mo.off().remove();
+    });
+    mo.modal({
+        backdrop: 'static',
+        keyboard: false
+    });
 
-			return $.ajax({
-				url: url,
-				success: function(r) {
-					mo.find('.modal-content').html(r);
-				},
-				error: function() {
-					return mo.find('.modal-content').html('Načtení obsahu se nezdařilo.');
-				}
-			});
-		}
-	}
+    return $.ajax({
+        url: url,
+        success: function(r) {
+            mo.find('.modal-content').html(r);
+        },
+        error: function() {
+            return mo.find('.modal-body').html('Loading failed');
+        }
+    });
 }
 
+$(function () {
 
-
-/*
- * LIGHTBOX
- */
-(function ()
-{
-	$(function ()
-	{
-		$(document).on('click', 'a.lightbox', function (e)
-		{
-			e.preventDefault();
-
-			var link = $(this);
-
-			modal(link.attr("href"), link.data("modal-title"));
-		});
-
-	});
-}).call(this);
-
-(function ()
-{
-	$(function ()
-	{
-		$(document).on('click', 'table tr', function ()
-		{
-			var next = $(this).next().next();
-
-			if (next.hasClass("commitChanges"))
-			{
-				next.toggleClass("hidden");
-			}
-
-		});
-
+	$(document).on('click', 'a.console', function (e) {
+		e.preventDefault();
+		var link = $(this);
+		modal(link.attr("href"), link.data("modal-title"));
 	});
 
-}).call(this);
+	$(document).on('click', 'table tr', function () {
+		var next = $(this).next().next();
+
+		if (next.hasClass("commitChanges")) {
+			next.toggleClass("hidden");
+		}
+	});
+});
 
 
 

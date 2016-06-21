@@ -1,0 +1,14 @@
+body {
+  padding: 10px;
+  background-color: #ddd;
+  font-family: 'Courier New', serif;
+  font-size: 12px;
+}
+span.true {
+  color: #5cb85c;
+  font-weight: bold;
+}
+span.false {
+  color: #db4a39;
+  font-weight: bold;
+}

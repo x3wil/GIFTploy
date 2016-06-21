@@ -1,0 +1,23 @@
+{% set modalClass = block('modalClass') %}
+
+<div class="modal-content">
+
+    <div class="modal-header">
+        <h4 class="modal-title">{% block title %}Modal{% endblock %}</h4>
+    </div>
+    <div class="modal-body {{ modalClass }}">
+        {% block content %}{% endblock %}
+    </div>
+    <div style="clear: both;"></div>
+    <div class="modal-footer {{ modalClass }}">
+        <div class="spinner" id="modal-footer-spinner">
+            <div class="rect1"></div>
+            <div class="rect2"></div>
+            <div class="rect3"></div>
+            <div class="rect4"></div>
+            <div class="rect5"></div>
+        </div>
+        <button type="button" id="modal-footer-btn-close" class="btn btn-success" data-dismiss="modal" disabled="disabled">Close</button>
+    </div>
+</div>
+

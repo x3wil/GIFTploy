@@ -69,7 +69,7 @@ class Deployer
      * Callback function returns filename, copy/delete result and error message.
      *
      * @param \GIFTploy\Deployer\FileStack $fileStack
-     * @param function $callback
+     * @param mixed $callback
      */
     public function deploy(FileStack $fileStack, $callback = null)
     {
@@ -78,6 +78,11 @@ class Deployer
         foreach ($fileStack->getFiles() as $mode => $files) {
 
             foreach ($files as $file) {
+
+                if (is_callable($callback)) {
+                    $callback($file, $mode, null, null);
+                }
+
                 if ($mode == 'copy') {
                     $result = $this->copyToRemote('/'.$file, $errorMessage);
                 } else {
@@ -85,7 +90,7 @@ class Deployer
                 }
 
                 if (is_callable($callback)) {
-                    $callback($file, $result, $errorMessage);
+                    $callback($file, $mode, $result, $errorMessage);
                 }
             }
         }
@@ -111,8 +116,8 @@ class Deployer
     /**
      * Delete file from server.
      *
-     * @param type $file
-     * @param type $error     Passed by reference.
+     * @param string $file
+     * @param string $error     Passed by reference.
      * @return boolean
      */
     protected function deleteFromRemote($file, &$error = null)

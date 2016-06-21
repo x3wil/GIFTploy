@@ -11,6 +11,8 @@ use GIFTploy\Filesystem\ServerFactory;
 use GIFTploy\Git\Parser\DiffParser;
 use GIFTploy\Git\Parser\LogParser;
 use GIFTploy\Deployer\FileStack;
+use GIFTploy\ProcessConsole;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/process")
@@ -37,17 +39,27 @@ class ProcessController extends Controller
         $assembler = new \GIFTploy\Deployer\Assembler($environmentObj, $server, $workingTree);
         $deployer = $assembler->getDeployer();
         $fileStack = $assembler->getDiffFileStack($commitHash);
+        $console = new ProcessConsole();
 
         $workingTree->checkout($commitHash);
+        $deployer->deploy($fileStack, function($file, $mode, $result, $errorMessage) use ($console) {
 
-        $deployer->deploy($fileStack, function($file, $result, $errorMessage) {
+            if ($result === null) {
+                $msg = ($mode == 'delete' ? 'Deleting file: ' : 'Uploading file: ');
+                $msg .= $file.'... ';
+
+                $console->flushProgress($msg);
+
+            } else {
+                $console->flushResult($result, $errorMessage);
+            }
         });
 
+        $console->closeConsole();
         $workingTree->checkout($environmentObj->getBranch());
-
         $deployer->writeLastDeployedRevision($commitHash);
 
-        return $this->app->redirect($this->app->url('environment-show', ['repositoryId' => $environmentObj->getRepository()->getId(), 'environmentId' => $environmentObj->getId()]));
+        return new Response();
     }
 
     /**

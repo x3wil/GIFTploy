@@ -128,7 +128,7 @@ class DiffParser implements Parser
                 continue;
             } else {
 
-                $lines = explode("\n", $part);
+                $lines = explode("\n", preg_replace('~\t~', '    ', $part));
                 array_pop($lines);
                 array_shift($lines);
 

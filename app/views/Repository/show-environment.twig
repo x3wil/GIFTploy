@@ -15,7 +15,7 @@
             </div>
             <div class="info-box-content buttons">
                 <div class="btn-group">
-                    <a href="{{ url('deploy', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat">Deploy</a>
+                    <a href="{{ url('deploy', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat console" data-modal-title="Deploying {{ firstCommit.getCommitHash() }}">Deploy</a>
                     <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
@@ -101,7 +101,7 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </a>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li><a href="#" class="deploy-link">Deploy to this commit</a></li>
+                            <li><a href="#" class="deploy-link console">Deploy to this commit</a></li>
                             <li><a href="#" class="mark-link">Mark as deployed</a></li>
                         </ul>
                     </div>
@@ -111,7 +111,7 @@
                             <span class="sr-only">Toggle Dropdown</span>
                         </a>
                         <ul class="dropdown-menu pull-right" role="menu">
-                            <li><a href="#" class="deploy-link">Rollback to this commit</a></li>
+                            <li><a href="#" class="deploy-link console">Rollback to this commit</a></li>
                             <li><a href="#" class="mark-link">Mark as rolbacked</a></li>
                         </ul>
                     </div>
