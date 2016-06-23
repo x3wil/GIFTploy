@@ -1,0 +1,13 @@
+{% extends 'layout.twig' %}
+
+{% block title %}
+    Cloning: {{ project.getTitle() }} - {{ environment.getTitle() }} <small>[{{ environment.getBranch() }}]</small>
+{% endblock %}
+
+{% block content %}
+
+    <div class="row console-inline">
+        <iframe src="{{ url('process-clone-repository', {'projectId': project.getId(), 'environmentId': environment.getId()}) }}" id="process-console-iframe" data-url-after="{{ url('environment-show', {'projectId': project.getId(), 'environmentId': environment.getId()}) }}" name="consoleInline" frameborder="0"></iframe>
+    </div>
+
+{% endblock %}

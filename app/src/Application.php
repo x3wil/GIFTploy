@@ -97,7 +97,7 @@ class Application extends Silicone\Application
         static $dir;
 
         if (empty($dir)) {
-            $dir = $this->getRootDir().'/projects';
+            $dir = $this->getRootDir().DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR.'projects';
 
             if (!is_dir($dir)) {
                 mkdir($dir, 0755, true);

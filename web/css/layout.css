@@ -206,3 +206,10 @@ body > .modal .modal-footer .spinner {
   margin-top: 0px;
   margin-bottom: 0px;
 }
+.console-inline {
+  height: 400px;
+}
+.console-inline iframe {
+  width: 100%;
+  height: 100%;
+}

@@ -301,7 +301,7 @@ class Environment
 
     public function getDirectory()
     {
-        return '/'.$this->getProject()->getId().'/'.$this->getId();
+        return DIRECTORY_SEPARATOR.$this->getProject()->getId().DIRECTORY_SEPARATOR.$this->getId();
     }
 
 }

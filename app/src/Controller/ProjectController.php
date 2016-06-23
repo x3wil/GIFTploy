@@ -107,7 +107,9 @@ class ProjectController extends Controller
      */
     public function showEnvironment($projectId, $environmentId)
     {
+        /** @var \Entity\Project $project */
         $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($projectId));
+        /** @var \Entity\Environment $environment */
         $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
 
         if (!$project) {
@@ -118,11 +120,13 @@ class ProjectController extends Controller
             $this->app->abort(404, $this->app->trans('error.404.environment'));
         }
 
-        $directory = $this->app->getProjectsDir().$environment->getDirectory();
         $repository = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
         if (!$repository) {
-            $repository = Git::cloneRepository($directory, $project->getUrl(), $environment->getBranch());
+            return $this->render('Project/clone-environment.twig', [
+                'project' => $project,
+                'environment' => $environment,
+            ]);
         }
 
         $serverDefault = $environment->getServers(1)->first();

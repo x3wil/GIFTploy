@@ -3,6 +3,7 @@
 namespace GIFTploy\Git;
 
 use GIFTploy\ProcessConsole;
+use Symfony\Component\Process\Process;
 
 /**
  * General class for git management.
@@ -123,7 +124,7 @@ class Git
 
         $process = self::getProcess([$command], $args, $options);
 
-        return self::runProcess($process);
+        return self::runProcess($process, $processConsole);
     }
 
     /**
@@ -133,9 +134,17 @@ class Git
      *
      * @return \Symfony\Component\Process\Process   Running process
      */
-    public static function runProcess(\Symfony\Component\Process\Process $process)
+    public static function runProcess(Process $process, ProcessConsole $processConsole = null)
     {
-        $process->run();
+        if ($processConsole !== null) {
+            $process->run(function ($type, $buffer) use ($processConsole) {
+                $processConsole->flushProgress($buffer);
+            });
+
+            $processConsole->closeConsole();
+        } else {
+            $process->run();
+        }
 
         return $process;
     }

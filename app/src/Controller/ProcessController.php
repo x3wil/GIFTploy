@@ -3,6 +3,7 @@
 namespace Controller;
 
 use Entity\Environment;
+use Entity\Project;
 use GIFTploy\Deployer\Assembler;
 use Silicone\Route;
 use Silicone\Controller;
@@ -37,7 +38,7 @@ class ProcessController extends Controller
         $assembler = new Assembler($environment, $server, $workingTree);
         $deployer = $assembler->getDeployer();
         $fileStack = $assembler->getDiffFileStack($commitHash);
-        $console = new ProcessConsole();
+        $console = new ProcessConsole(ProcessConsole::TYPE_MODAL);
 
         $workingTree->checkout($commitHash);
         $deployer->deploy($fileStack, function ($file, $mode, $result, $errorMessage) use ($console) {
@@ -87,4 +88,29 @@ class ProcessController extends Controller
             'environmentId' => $environment->getId(),
         ]));
     }
+
+    /**
+     * @Route("/clone/{projectId}/{environmentId}", name="process-clone-repository", requirements={"projectId"="\d+", "environmentId"="\d+"})
+     */
+    public function cloneRepository($projectId, $environmentId)
+    {
+        /** @var \Entity\Project $project */
+        $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($projectId));
+        /** @var \Entity\Environment $environment */
+        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
+
+        if (!$project) {
+            $this->app->abort(404, $this->app->trans('error.404.project'));
+        }
+
+        if (!$environment) {
+            $this->app->abort(404, $this->app->trans('error.404.environment'));
+        }
+
+        $directory = $this->app->getProjectsDir().$environment->getDirectory();
+        Git::cloneRepository($directory, $project->getUrl(), $environment->getBranch(), new ProcessConsole(ProcessConsole::TYPE_INLINE));
+
+        return new Response();
+    }
+
 }

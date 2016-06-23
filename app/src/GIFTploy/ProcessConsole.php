@@ -5,12 +5,21 @@ namespace GIFTploy;
 class ProcessConsole
 {
 
+    const TYPE_MODAL = 'modal';
+    const TYPE_INLINE = 'inline';
+
+    protected $type;
     protected $consoleEnabled = false;
     protected $outputBuffering = false;
     protected $timeStart = 0;
 
-    public function __construct()
+    public function __construct($type)
     {
+        if ($type !== self::TYPE_MODAL && $type !== self::TYPE_INLINE) {
+            throw new \UnexpectedValueException('Invalid type. Use ProcessConsole::TYPE_MODAL or ProcessConsole::TYPE_INLINE');
+        }
+
+        $this->type = $type;
         $this->consoleEnabled = true;
         $this->timeStart = microtime(true);
 
@@ -33,8 +42,8 @@ class ProcessConsole
         header('Content-Type: text/html; charset=utf-8');
         ob_start();
 
-        echo '<link rel="stylesheet" href="/css/console.css">';
-        echo '<script src="/js/console.js"></script>';
+        echo sprintf('<link rel="stylesheet" href="/css/process-console-%s.css">', $this->type);
+        echo sprintf('<script src="/js/process-console-%s.js"></script>', $this->type);
 
         return $this;
     }
