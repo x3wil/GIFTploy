@@ -1,6 +1,7 @@
 <?php
 namespace Controller;
 
+use Entity\Project;
 use Silicone\Route;
 use Silicone\Controller;
 
@@ -12,11 +13,11 @@ class IndexController extends Controller
      */
     public function projectList()
     {
-        /* @var \Entity\RepositoryRepository $repository */
-        $repository = $this->app->entityManager()->getRepository('Entity\Repository');
+        /* @var \Entity\ProjectRepository $project */
+        $project = $this->app->entityManager()->getRepository(Project::class);
 
         return $this->render("Default/project-list.twig", [
-            "repositories" => $repository->getItemsQuery()->getQuery()->getResult(),
+            "repositories" => $project->getItemsQuery()->getQuery()->getResult(),
         ]);
     }
 

@@ -22,19 +22,19 @@ class ProcessController extends Controller
      */
     public function deploy($environmentId, $serverFactoryId, $commitHash)
     {
-        /* @var \Entity\Environment $environmentObj */
-        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        /* @var \Entity\Environment $environment */
+        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
         $serverFactory = $this->app->entityManager()
-            ->getRepository('Entity\ServerFactory')
+            ->getRepository(\Entity\ServerFactory::class)
             ->findOneBy([
                 'id' => $serverFactoryId,
                 'environment' => $environmentId,
             ]);
 
         $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
-        $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+        $workingTree = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
-        $assembler = new Assembler($environmentObj, $server, $workingTree);
+        $assembler = new Assembler($environment, $server, $workingTree);
         $deployer = $assembler->getDeployer();
         $fileStack = $assembler->getDiffFileStack($commitHash);
         $console = new ProcessConsole();
@@ -54,7 +54,7 @@ class ProcessController extends Controller
         });
 
         $console->closeConsole();
-        $workingTree->checkout($environmentObj->getBranch());
+        $workingTree->checkout($environment->getBranch());
         $deployer->writeLastDeployedRevision($commitHash);
 
         return new Response();
@@ -65,26 +65,26 @@ class ProcessController extends Controller
      */
     public function mark($environmentId, $serverFactoryId, $commitHash)
     {
-        /* @var \Entity\Environment $environmentObj */
-        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        /* @var \Entity\Environment $environment */
+        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
         $serverFactory = $this->app->entityManager()
-            ->getRepository('Entity\ServerFactory')
+            ->getRepository(\Entity\ServerFactory::class)
             ->findOneBy([
                 'id' => $serverFactoryId,
                 'environment' => $environmentId,
             ]);
 
         $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
-        $workingTree = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+        $workingTree = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
-        $assembler = new Assembler($environmentObj, $server, $workingTree);
+        $assembler = new Assembler($environment, $server, $workingTree);
         $deployer = $assembler->getDeployer();
 
         $deployer->writeLastDeployedRevision($commitHash);
 
         return $this->app->redirect($this->app->url('environment-show', [
-            'repositoryId' => $environmentObj->getRepository()->getId(),
-            'environmentId' => $environmentObj->getId(),
+            'repositoryId' => $environment->getProject()->getId(),
+            'environmentId' => $environment->getId(),
         ]));
     }
 }

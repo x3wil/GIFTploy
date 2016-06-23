@@ -1,7 +1,7 @@
 {% extends 'layout.twig' %}
 
 {% block title %}
-    {{ environmentObj.getTitle() }} <small>[{{ environmentObj.getBranch() }}]</small>
+    {{ environment.getTitle() }} <small>[{{ environment.getBranch() }}]</small>
 {% endblock %}
 
 {% block contentClass %}header-box{% endblock %}
@@ -9,19 +9,19 @@
 {% block headerSide %}
     <div class="info-box server-switch">
         {% if server %}
-            <a href="{{ url('server-ftp-edit', {'id': server.getId(), 'environmentId': environmentObj.getId()}) }}" class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></a>
+            <a href="{{ url('server-ftp-edit', {'id': server.getId(), 'environmentId': environment.getId()}) }}" class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></a>
             <div class="info-box-content">
                 <span class="info-box-text">{{ server.getTitle() }}</span>
             </div>
             <div class="info-box-content buttons">
                 <div class="btn-group">
-                    <a href="{{ url('deploy', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat console" data-modal-title="Deploying {{ firstCommit.getCommitHash() }}">Deploy</a>
+                    <a href="{{ url('deploy', {'environmentId': environment.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat console" data-modal-title="Deploying {{ firstCommit.getCommitHash() }}">Deploy</a>
                     <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="{{ url('mark', {'environmentId': environmentObj.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}">Mark all as deployed</a></li>
+                        <li><a href="{{ url('mark', {'environmentId': environment.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}">Mark all as deployed</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Add new server</a></li>
                     </ul>
@@ -33,7 +33,7 @@
                 <span class="info-box-text">There is no server for this environment</span>
             </div>
             <div class="info-box-content buttons">
-                <a href="{{ url('server-ftp-new', {'environmentId': environmentObj.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i></a>
+                <a href="{{ url('server-ftp-new', {'environmentId': environment.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i></a>
             </div>
         {% endif %}
     </div>
@@ -44,7 +44,7 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-7" id="commits-list" data-environment-id="{{ environmentObj.getId() }}">
+        <div class="col-md-7" id="commits-list" data-environment-id="{{ environment.getId() }}">
             <div class="box">
                 <div class="box-body">
                     <table class="table table-condensed table-hover">
@@ -121,7 +121,7 @@
                     <div class="active tab-pane" id="tab-commit-files">
                         {% for commit in commits %}
                             <div class="commit-detail" id="commit-{{ commit.getCommitHash() }}">
-                                {{ app.twig.render('Repository/_show-commit-detail.twig', {'commit': commit})|raw }}
+                                {{ app.twig.render('Project/_show-commit-detail.twig', {'commit': commit})|raw }}
                             </div>
                         {% endfor %}
                     </div>

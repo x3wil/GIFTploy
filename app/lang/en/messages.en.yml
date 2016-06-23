@@ -1,12 +1,11 @@
 title: Silicone Skeleton
-hello.world: Hello Wolrd!
 
 form:
     submit: Submit
 
-    repository:
+    project:
         title: Title
-        url: Repository URL
+        url: GIT repository URL
         username: Login
         password: Password
 
@@ -28,7 +27,7 @@ form:
 
 error:
     404:
-        repository: Repository does not exist.
+        project: Project does not exist.
         Environment: Environment does not exist.
 
 register: Register

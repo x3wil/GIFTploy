@@ -9,13 +9,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
 /**
- * Repository
+ * Project
  *
- * @ORM\Table(name="repository")
- * @ORM\Entity(repositoryClass="Entity\RepositoryRepository")
+ * @ORM\Table(name="project")
+ * @ORM\Entity(repositoryClass="Entity\ProjectRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class Repository
+class Project
 {
 
     /**
@@ -28,7 +28,7 @@ class Repository
     private $id;
 
     /**
-     * @ORM\OneToMany(targetEntity="Environment", mappedBy="repository")
+     * @ORM\OneToMany(targetEntity="Environment", mappedBy="project")
      */
     private $environments;
 
@@ -133,7 +133,7 @@ class Repository
      * Set title
      *
      * @param string $title
-     * @return Repository
+     * @return Project
      */
     public function setTitle($title)
     {
@@ -156,7 +156,7 @@ class Repository
      * Set url
      *
      * @param string $url
-     * @return Repository
+     * @return Project
      */
     public function setUrl($url)
     {
@@ -179,7 +179,7 @@ class Repository
      * Set username
      *
      * @param string $username
-     * @return Repository
+     * @return Project
      */
     public function setUsername($username)
     {
@@ -202,7 +202,7 @@ class Repository
      * Set password
      *
      * @param string $password
-     * @return Repository
+     * @return Project
      */
     public function setPassword($password)
     {
@@ -225,7 +225,7 @@ class Repository
      * Set enabled
      *
      * @param boolean $enabled
-     * @return Repository
+     * @return Project
      */
     public function setEnabled($enabled)
     {
@@ -248,7 +248,7 @@ class Repository
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return Repository
+     * @return Project
      */
     public function setCreatedAt($createdAt)
     {
@@ -271,7 +271,7 @@ class Repository
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * @return Repository
+     * @return Project
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -294,7 +294,7 @@ class Repository
      * Add environments
      *
      * @param \Entity\Environment $environments
-     * @return Repository
+     * @return Project
      */
     public function addEnvironment(\Entity\Environment $environments)
     {

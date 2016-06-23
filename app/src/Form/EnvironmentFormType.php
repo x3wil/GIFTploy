@@ -2,6 +2,7 @@
 
 namespace Form;
 
+use Entity\Environment;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -12,8 +13,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class EnvironmentFormType extends AbstractType
 {
-
-    private $class = 'Entity\Environment';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -49,7 +48,7 @@ class EnvironmentFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class,
+            'data_class' => Environment::class,
             'intention' => 'environment',
             'validation_groups' => ['Environment'],
         ]);

@@ -7,6 +7,7 @@
 
 namespace Form;
 
+use Entity\User;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -14,7 +15,6 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class RegistrationFormType extends AbstractType
 {
-    private $class = 'Entity\User';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -33,7 +33,7 @@ class RegistrationFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class,
+            'data_class' => User::class,
             'intention' => 'registration',
             'validation_groups' => ['Registration'],
         ]);
@@ -43,4 +43,5 @@ class RegistrationFormType extends AbstractType
     {
         return 'user_registration';
     }
+
 }

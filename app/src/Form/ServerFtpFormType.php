@@ -2,6 +2,7 @@
 
 namespace Form;
 
+use Entity\ServerFtp;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -10,7 +11,6 @@ use Symfony\Component\Form\Extension\Core\Type;
 
 class ServerFtpFormType extends AbstractType
 {
-    private $class = 'Entity\ServerFtp';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -68,7 +68,7 @@ class ServerFtpFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class,
+            'data_class' => ServerFtp::class,
             'intention' => 'server',
             'validation_groups' => ['ServerFtp'],
         ]);

@@ -254,7 +254,7 @@ function formRepositoryTestConnection()
 
 			xhr = $.ajax({
 				method: "POST",
-				url: "/Repository/testConnection",
+				url: "/Project/testConnection",
 				data: { remote: $("#remote").val(), username: $("#username").val(), pass: $("#pass").val() }
 			})
 			.done(function(response)

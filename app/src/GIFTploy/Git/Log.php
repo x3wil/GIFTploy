@@ -2,7 +2,6 @@
 
 namespace GIFTploy\Git;
 
-use GIFTploy\Git\Parser\LogParser;
 use GIFTploy\Git\Parser\Parser;
 
 /**

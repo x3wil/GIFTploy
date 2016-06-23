@@ -4,14 +4,12 @@ namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use League\Flysystem\Adapter\Ftp;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GIFTploy\Filesystem\ServerInterface;
 
 /**
- * Repository
+ * FTP
  *
  * @ORM\Table(name="server_ftp")
  * @ORM\Entity(repositoryClass="Entity\ServerFtpRepository")

@@ -4,20 +4,20 @@
 
     <div class="row">
 
-        {% for repository in repositories %}
+        {% for project in repositories %}
             <div class="col-md-4">
                 <div class="box box-widget widget-user-2">
                     <div class="widget-user-header bg-yellow">
                         <div class="widget-user-image">
                             <img class="img-circle" src="/images/logo-git.png" alt="User Avatar">
                         </div>
-                        <h3 class="widget-user-username">{{ repository.getTitle() }}</h3>
+                        <h3 class="widget-user-username">{{ project.getTitle() }}</h3>
                         <h5 class="widget-user-desc">Project</h5>
                     </div>
                     <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
-                            {% for environment in repository.getEnvironments() %}
-                                <li><a href="{{ url('environment-show', {'repositoryId': repository.getId, 'environmentId': environment.getId()}) }}">{{ environment.getTitle }}</a></li>
+                            {% for environment in project.getEnvironments() %}
+                                <li><a href="{{ url('environment-show', {'projectId': project.getId, 'environmentId': environment.getId()}) }}">{{ environment.getTitle }}</a></li>
                             {% endfor %}
                         </ul>
                     </div>

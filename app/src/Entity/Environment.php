@@ -10,7 +10,7 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Collections\Criteria;
 
 /**
- * Repository
+ * Project
  *
  * @ORM\Table(name="environment")
  * @ORM\Entity(repositoryClass="Entity\EnvironmentRepository")
@@ -28,11 +28,11 @@ class Environment
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Repository", inversedBy="environments")
+     * @ORM\ManyToOne(targetEntity="Project", inversedBy="environments")
      * @ORM\JoinColumn(name="repository_id", referencedColumnName="id")
      * @Assert\NotBlank()
      */
-    private $repository;
+    private $project;
 
     /**
      * @ORM\OneToMany(targetEntity="ServerFactory", mappedBy="environment")
@@ -238,35 +238,35 @@ class Environment
     }
 
     /**
-     * Set repository
+     * Set project
      *
-     * @param \Entity\Repository $repository
+     * @param \Entity\Project $project
      * @return Environment
      */
-    public function setRepository(\Entity\Repository $repository = null)
+    public function setProject(\Entity\Project $project = null)
     {
-        $this->repository = $repository;
+        $this->project = $project;
     
         return $this;
     }
 
     /**
-     * Get repository
+     * Get project
      *
-     * @return \Entity\Repository 
+     * @return \Entity\Project 
      */
-    public function getRepository()
+    public function getProject()
     {
-        return $this->repository;
+        return $this->project;
     }
 
     /**
      * Add servers
      *
-     * @param \Entity\Server $servers
+     * @param \Entity\ServerFactory $servers
      * @return Environment
      */
-    public function addServer(\Entity\Server $servers)
+    public function addServer(\Entity\ServerFactory $servers)
     {
         $this->servers[] = $servers;
 
@@ -276,9 +276,9 @@ class Environment
     /**
      * Remove servers
      *
-     * @param \Entity\Server $servers
+     * @param \Entity\ServerFactory $servers
      */
-    public function removeServer(\Entity\Server $servers)
+    public function removeServer(\Entity\ServerFactory $servers)
     {
         $this->servers->removeElement($servers);
     }
@@ -301,7 +301,7 @@ class Environment
 
     public function getDirectory()
     {
-        return '/'.$this->getRepository()->getId().'/'.$this->getId();
+        return '/'.$this->getProject()->getId().'/'.$this->getId();
     }
 
 }

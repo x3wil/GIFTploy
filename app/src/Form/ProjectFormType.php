@@ -2,42 +2,42 @@
 
 namespace Form;
 
+use Entity\Project;
 use Silex\Application;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Form\Extension\Core\Type;
 
-class RepositoryFormType extends AbstractType
+class ProjectFormType extends AbstractType
 {
-    private $class = 'Entity\Repository';
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('title', null, [
-                'label' => 'form.repository.title',
+                'label' => 'form.project.title',
                 'attr' => [
-                    'placeholder' => 'form.repository.title',
+                    'placeholder' => 'form.project.title',
                 ],
             ])
             ->add('url', null, [
-                'label' => 'form.repository.url',
+                'label' => 'form.project.url',
                 'attr' => [
-                    'placeholder' => 'form.repository.url',
+                    'placeholder' => 'form.project.url',
                 ],
             ])
-            //            ->add('branch', null, ['label' => 'form.repository.branch', 'attr' => ['placeholder' => 'form.repository.branch']])
+            //            ->add('branch', null, ['label' => 'form.project.branch', 'attr' => ['placeholder' => 'form.project.branch']])
             ->add('username', null, [
-                'label' => 'form.repository.username',
+                'label' => 'form.project.username',
                 'attr' => [
-                    'placeholder' => 'form.repository.username',
+                    'placeholder' => 'form.project.username',
                 ],
             ])
             ->add('password', Type\PasswordType::class, [
-                'label' => 'form.repository.password',
+                'label' => 'form.project.password',
                 'attr' => [
-                    'placeholder' => 'form.repository.password',
+                    'placeholder' => 'form.project.password',
                 ],
             ]);
     }
@@ -45,14 +45,14 @@ class RepositoryFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->class,
-            'intention' => 'repository',
-            'validation_groups' => ['Repository'],
+            'data_class' => Project::class,
+            'intention' => 'project',
+            'validation_groups' => ['Project'],
         ]);
     }
 
     public function getName()
     {
-        return 'repository';
+        return 'project';
     }
 }

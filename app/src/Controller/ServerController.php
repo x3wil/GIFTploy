@@ -2,6 +2,7 @@
 
 namespace Controller;
 
+use Entity\Environment;
 use Entity\ServerFtp;
 use Form\ServerFtpFormType;
 use Silicone\Route;
@@ -19,13 +20,13 @@ class ServerController extends Controller
      */
     public function ftpform($environmentId, $id = null)
     {
-        $environmentObj = $this->app->entityManager()->getRepository('Entity\Environment')->find(intval($environmentId));
+        $environmentObj = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
 
         if (!$environmentObj) {
             $this->app->abort(404, $this->app->trans('error.404.environment'));
         }
 
-        $serverFtpObj = $this->app->entityManager()->getRepository('Entity\ServerFtp')->find(intval($id));
+        $serverFtpObj = $this->app->entityManager()->getRepository(ServerFtp::class)->find(intval($id));
 
         if (!$serverFtpObj) {
             $serverFtpObj = new ServerFtp();

@@ -3,6 +3,7 @@
 namespace GIFTploy\Filesystem;
 
 use Doctrine\ORM\EntityManager;
+use Entity\ServerFtp;
 
 /**
  * Factory class for server types.
@@ -37,7 +38,7 @@ class ServerFactory
     {
         switch ($type) {
             case self::SERVER_TYPE_FTP:
-                $repositoryName = 'Entity\ServerFtp';
+                $repositoryName = ServerFtp::class;
                 break;
         }
 
