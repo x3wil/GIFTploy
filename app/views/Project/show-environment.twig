@@ -8,20 +8,20 @@
 
 {% block headerSide %}
     <div class="info-box server-switch">
-        {% if server %}
-            <a href="{{ url('server-ftp-edit', {'id': server.getId(), 'environmentId': environment.getId()}) }}" class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></a>
+        {% if serverType %}
+            <a href="{{ url('server-edit', {'serverId': serverType.getId(), 'environmentId': environment.getId(), 'type': 'ftp'}) }}" class="info-box-icon bg-yellow" title="Edit server"><i class="fa fa-server"></i></a>
             <div class="info-box-content">
-                <span class="info-box-text">{{ server.getTitle() }}</span>
+                <span class="info-box-text">{{ serverType.getTitle() }}</span>
             </div>
             <div class="info-box-content buttons">
                 <div class="btn-group">
-                    <a href="{{ url('deploy', {'environmentId': environment.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat console" data-modal-title="Deploying {{ firstCommit.getCommitHash() }}">Deploy</a>
+                    <a href="{{ url('deploy', {'environmentId': environment.getId(), 'serverId': server.getId(), 'commitHash': firstCommit.getCommitHash()}) }}" class="btn btn-success btn-flat console" data-modal-title="Deploying {{ firstCommit.getCommitHash() }}">Deploy</a>
                     <a class="btn btn-success btn-flat dropdown-toggle" data-toggle="dropdown">
                         <span class="caret"></span>
                         <span class="sr-only">Toggle Dropdown</span>
                     </a>
                     <ul class="dropdown-menu pull-right" role="menu">
-                        <li><a href="{{ url('mark', {'environmentId': environment.getId(), 'serverFactoryId': serverFactory.getId(), 'commitHash': firstCommit.getCommitHash()}) }}">Mark all as deployed</a></li>
+                        <li><a href="{{ url('mark', {'environmentId': environment.getId(), 'serverId': server.getId(), 'commitHash': firstCommit.getCommitHash()}) }}">Mark all as deployed</a></li>
                         <li class="divider"></li>
                         <li><a href="#">Add new server</a></li>
                     </ul>
@@ -33,7 +33,7 @@
                 <span class="info-box-text">There is no server for this environment</span>
             </div>
             <div class="info-box-content buttons">
-                <a href="{{ url('server-ftp-new', {'environmentId': environment.getId()}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i></a>
+                <a href="{{ url('server-new', {'environmentId': environment.getId(), 'type': 'ftp'}) }}" class="btn btn-success btn-flat"><i class="fa fa-plus"></i></a>
             </div>
         {% endif %}
     </div>

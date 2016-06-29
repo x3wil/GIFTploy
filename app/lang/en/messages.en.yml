@@ -8,10 +8,17 @@ form:
         url: GIT repository URL
         username: Login
         password: Password
+        successMessageNew: Project has been created, now add new environment.
+        successMessageEdit: Project has been updated.
+        errorMessage: There has been error during saving environment.
+        errorUniqueMessage: Project with this title is already exists.
 
     environment:
         title: Title
         branch: Branch
+        successMessageNew: Environenment has been created.
+        successMessageEdit: Environenment has been updated.
+        errorMessage: There has been error during saving environment.
 
     server:
         ftp:
@@ -25,10 +32,16 @@ form:
             passive: Passive mode
             timeout: Timeout
 
+        successMessageNew: Server has been created.
+        successMessageEdit: Server has been updated.
+        errorMessage: There has been error during saving server.
+        errorMessageConnect: Could not login to server with this connection.
+
 error:
     404:
         project: Project does not exist.
-        Environment: Environment does not exist.
+        environment: Environment does not exist.
+        server: Server does not exist.
 
 register: Register
 login: Login

@@ -10,8 +10,12 @@ namespace GIFTploy\Filesystem;
 interface ServerInterface
 {
 
+    public function getId();
+
     public function getConfiguration();
 
     public function getAdapter();
+
+    public function getType();
 
 }

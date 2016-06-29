@@ -27,14 +27,6 @@ class Application extends Silicone\Application
     }
 
     /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public function entityManager()
-    {
-        return $this['em'];
-    }
-
-    /**
      * Get session object.
      *
      * @return Session
@@ -42,6 +34,11 @@ class Application extends Silicone\Application
     public function session()
     {
         return $this['session'];
+    }
+
+    public function getFlashBag()
+    {
+        return $this['session']->getFlashBag();
     }
 
     /**

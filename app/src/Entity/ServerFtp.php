@@ -4,12 +4,13 @@ namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use League\Flysystem\Adapter\Ftp;
+use Service\ServerService;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use GIFTploy\Filesystem\ServerInterface;
 
 /**
- * FTP
+ * FTP SERVER
  *
  * @ORM\Table(name="server_ftp")
  * @ORM\Entity(repositoryClass="Entity\ServerFtpRepository")
@@ -63,7 +64,7 @@ class ServerFtp implements ServerInterface
      *
      * @ORM\Column(name="port", type="integer")
      */
-    private $port;
+    private $port = 21;
 
     /**
      * @var integer
@@ -92,7 +93,7 @@ class ServerFtp implements ServerInterface
      * @ORM\Column(name="timeout", type="integer")
      * @Assert\GreaterThan(value = 0)
      */
-    private $timeout;
+    private $timeout = 10;
 
     /**
      * @var boolean
@@ -132,28 +133,10 @@ class ServerFtp implements ServerInterface
         $this->sslConnection = false;
     }
 
-    public function __construct()
-    {
-        if ($this->isNew()) {
-            $this->setPort(21);
-            $this->setTimeout(10);
-        }
-    }
-
-    public function __toString()
-    {
-        return $this->getTitle();
-    }
-
-    public function isNew()
-    {
-        return !((bool)$this->getId());
-    }
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -169,14 +152,14 @@ class ServerFtp implements ServerInterface
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -192,14 +175,14 @@ class ServerFtp implements ServerInterface
     public function setHost($host)
     {
         $this->host = $host;
-    
+
         return $this;
     }
 
     /**
      * Get host
      *
-     * @return string 
+     * @return string
      */
     public function getHost()
     {
@@ -215,14 +198,14 @@ class ServerFtp implements ServerInterface
     public function setUsername($username)
     {
         $this->username = $username;
-    
+
         return $this;
     }
 
     /**
      * Get username
      *
-     * @return string 
+     * @return string
      */
     public function getUsername()
     {
@@ -238,14 +221,14 @@ class ServerFtp implements ServerInterface
     public function setPassword($password)
     {
         $this->password = $password;
-    
+
         return $this;
     }
 
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
@@ -261,14 +244,14 @@ class ServerFtp implements ServerInterface
     public function setPort($port)
     {
         $this->port = $port;
-    
+
         return $this;
     }
 
     /**
      * Get port
      *
-     * @return integer 
+     * @return integer
      */
     public function getPort()
     {
@@ -284,14 +267,14 @@ class ServerFtp implements ServerInterface
     public function setPath($path)
     {
         $this->path = $path;
-    
+
         return $this;
     }
 
     /**
      * Get path
      *
-     * @return string 
+     * @return string
      */
     public function getPath()
     {
@@ -307,14 +290,14 @@ class ServerFtp implements ServerInterface
     public function setPassive($passive)
     {
         $this->passive = $passive;
-    
+
         return $this;
     }
 
     /**
      * Get passive
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getPassive()
     {
@@ -330,14 +313,14 @@ class ServerFtp implements ServerInterface
     public function setSslConnection($sslConnection)
     {
         $this->sslConnection = $sslConnection;
-    
+
         return $this;
     }
 
     /**
      * Get sslConnection
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getSslConnection()
     {
@@ -353,14 +336,14 @@ class ServerFtp implements ServerInterface
     public function setTimeout($timeout)
     {
         $this->timeout = $timeout;
-    
+
         return $this;
     }
 
     /**
      * Get timeout
      *
-     * @return integer 
+     * @return integer
      */
     public function getTimeout()
     {
@@ -376,14 +359,14 @@ class ServerFtp implements ServerInterface
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-    
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnabled()
     {
@@ -399,14 +382,14 @@ class ServerFtp implements ServerInterface
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -422,14 +405,14 @@ class ServerFtp implements ServerInterface
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    
+
         return $this;
     }
 
     /**
      * Get updatedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -462,4 +445,10 @@ class ServerFtp implements ServerInterface
     {
         return new Ftp($this->getConfiguration());
     }
+
+    public function getType()
+    {
+        return ServerService::SERVER_TYPE_FTP;
+    }
+
 }

@@ -1,37 +1,30 @@
 <?php
 namespace Controller;
 
-use Entity\Project;
 use Silicone\Route;
 use Silicone\Controller;
 
 class IndexController extends Controller
 {
 
+    /** @var \Service\ProjectService */
+    private $projectService;
+
+    public function __construct(\Application $app)
+    {
+        parent::__construct($app);
+
+        $this->projectService = $app['ProjectService'];
+    }
+
     /**
      * @Route("/", name="project-list")
      */
     public function projectList()
     {
-        /* @var \Entity\ProjectRepository $project */
-        $project = $this->app->entityManager()->getRepository(Project::class);
-
-        return $this->render("Default/project-list.twig", [
-            "repositories" => $project->getItemsQuery()->getQuery()->getResult(),
+        return $this->render('Default/project-list.twig', [
+            'projects' => $this->projectService->getProjects(),
         ]);
-    }
-
-
-    /**
-     * @Route("/eee", name="index")
-     */
-    public function index()
-    {
-//        dd($this->app);
-//        $repository = $this->app->entityManager()->getRepository('Entity\Sample');
-//        dd($repository->getItemsQuery()->getQuery()->getResult());
-
-        return $this->render('index.twig');
     }
 
     /**

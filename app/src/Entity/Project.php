@@ -3,8 +3,6 @@
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -35,7 +33,7 @@ class Project
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
      * @Assert\NotBlank()
      * @Assert\Length(min = "3", max = "30")
      */
@@ -89,7 +87,6 @@ class Project
      */
     public function preUpdate(LifecycleEventArgs $args)
     {
-
         $this->updatedAt = new \DateTime();
     }
 
@@ -99,16 +96,6 @@ class Project
     public function prePersist(LifecycleEventArgs $args)
     {
         $this->createdAt = new \DateTime();
-    }
-
-    public function __toString()
-    {
-        return $this->getTitle();
-    }
-
-    public function isNew()
-    {
-        return !((bool)$this->getId());
     }
 
     /**
@@ -122,7 +109,7 @@ class Project
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -138,14 +125,14 @@ class Project
     public function setTitle($title)
     {
         $this->title = $title;
-    
+
         return $this;
     }
 
     /**
      * Get title
      *
-     * @return string 
+     * @return string
      */
     public function getTitle()
     {
@@ -161,14 +148,14 @@ class Project
     public function setUrl($url)
     {
         $this->url = $url;
-    
+
         return $this;
     }
 
     /**
      * Get url
      *
-     * @return string 
+     * @return string
      */
     public function getUrl()
     {
@@ -184,14 +171,14 @@ class Project
     public function setUsername($username)
     {
         $this->username = $username;
-    
+
         return $this;
     }
 
     /**
      * Get username
      *
-     * @return string 
+     * @return string
      */
     public function getUsername()
     {
@@ -207,14 +194,14 @@ class Project
     public function setPassword($password)
     {
         $this->password = $password;
-    
+
         return $this;
     }
 
     /**
      * Get password
      *
-     * @return string 
+     * @return string
      */
     public function getPassword()
     {
@@ -230,14 +217,14 @@ class Project
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-    
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnabled()
     {
@@ -253,14 +240,14 @@ class Project
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -276,14 +263,14 @@ class Project
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    
+
         return $this;
     }
 
     /**
      * Get updatedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -299,7 +286,7 @@ class Project
     public function addEnvironment(\Entity\Environment $environments)
     {
         $this->environments[] = $environments;
-    
+
         return $this;
     }
 
@@ -316,7 +303,7 @@ class Project
     /**
      * Get environments
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getEnvironments()
     {

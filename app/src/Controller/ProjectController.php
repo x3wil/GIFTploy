@@ -2,8 +2,6 @@
 
 namespace Controller;
 
-use Entity\Environment;
-use Entity\Project;
 use Form\EnvironmentFormType;
 use Form\ProjectFormType;
 use GIFTploy\Git\Commit;
@@ -13,10 +11,9 @@ use Silicone\Controller;
 use GIFTploy\Git\Git;
 use GIFTploy\Git\Parser\LogParser;
 use GIFTploy\Git\Parser\DiffParser;
-use GIFTploy\Filesystem\ServerFactory;
-use GIFTploy\ProcessConsole;
 use GIFTploy\Filesystem\FilesystemBuilder;
 use GIFTploy\Deployer\Deployer;
+use Symfony\Component\Form\FormError;
 
 /**
  * @Route("/project")
@@ -24,32 +21,60 @@ use GIFTploy\Deployer\Deployer;
 class ProjectController extends Controller
 {
 
+    /** @var \Service\ProjectService */
+    private $projectService;
+
+    /** @var \Service\EnvironmentService */
+    private $environmentService;
+
+    /** @var \Service\ServerService */
+    private $serverService;
+
+    public function __construct(\Application $app)
+    {
+        parent::__construct($app);
+
+        $this->projectService = $app['ProjectService'];
+        $this->environmentService = $app['EnvironmentService'];
+        $this->serverService = $app['ServerService'];
+    }
+
     /**
      * @Route("/new-project", name="project-new")
      * @Route("/edit-project/{id}", name="project-edit", requirements={"id"="\d+"})
      */
-    public function projectform($id = null)
+    public function projectForm($id = null)
     {
-        $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($id));
-
-        if (!$project) {
-            $project = new Project();
-            $project->setEnabled(true);
-        }
+        $project = $this->projectService->findById((int)$id);
+        $editing = ($project !== null);
 
         $form = $this->app->formType(new ProjectFormType(), $project);
 
         if ($this->request->isMethod('POST')) {
-            $form->bind($this->request);
+            $form->submit($this->request);
 
             if ($form->isValid()) {
+                try {
+                    $project = $form->getData();
+                    $this->projectService->save($project);
 
-                $project = $form->getData();
+                    if ($editing) {
+                        $this->successMessage($this->trans('form.project.successMessageEdit'));
 
-                $this->app->entityManager()->persist($project);
-                $this->app->entityManager()->flush();
+                        return $this->app->redirect($this->app->url('project-list'));
+                    } else {
+                        $this->successMessage($this->trans('form.project.successMessageNew'));
 
-                return $this->app->redirect($this->app->url('login'));
+                        return $this->app->redirect($this->app->url('environment-new',
+                            ['projectId' => $project->getId()]));
+                    }
+
+                } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
+                    $form->get('title')->addError(new FormError($this->trans('form.project.errorUniqueMessage')));
+
+                } catch (\Exception $e) {
+                    $this->errorMessage($this->trans('form.project.errorMessage'));
+                }
             }
         }
 
@@ -68,28 +93,39 @@ class ProjectController extends Controller
      */
     public function environmentForm($projectId, $id = null)
     {
-        $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($projectId));
-        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($id));
+        $project = $this->projectService->findById((int)$projectId);
+        $environment = $this->environmentService->findById((int)$id);
+        $editing = ($environment !== null);
 
-        if (!$environment) {
-            $environment = new Environment();
-            $environment->setProject($project);
-            $environment->setEnabled(true);
+        if ($environment !== null && $environment->getProject()->getId() !== $project->getId()) {
+            $this->app->abort(404, $this->trans('error.404.environment'));
         }
 
         $form = $this->app->formType(new EnvironmentFormType(), $environment);
 
         if ($this->request->isMethod('POST')) {
-            $form->bind($this->request);
+            $form->submit($this->request);
 
             if ($form->isValid()) {
-
                 $environment = $form->getData();
 
-                $this->app->entityManager()->persist($environment);
-                $this->app->entityManager()->flush();
+                try {
+                    $this->environmentService->save($project, $environment);
 
-                return $this->app->redirect($this->app->url('login'));
+                    if ($editing) {
+                        $this->successMessage($this->trans('form.environment.successMessageEdit'));
+                    } else {
+                        $this->successMessage($this->trans('form.environment.successMessageNew'));
+                    }
+
+                    return $this->app->redirect($this->url('environment-show', [
+                        'projectId' => $project->getId(),
+                        'environmentId' => $environment->getId(),
+                    ]));
+
+                } catch (\Exception $e) {
+                    $this->errorMessage($this->trans('form.environment.errorMessage'));
+                }
             }
         }
 
@@ -107,17 +143,15 @@ class ProjectController extends Controller
      */
     public function showEnvironment($projectId, $environmentId)
     {
-        /** @var \Entity\Project $project */
-        $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($projectId));
-        /** @var \Entity\Environment $environment */
-        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
+        $project = $this->projectService->findById((int)$projectId);
+        $environment = $this->environmentService->findById((int)$environmentId);
 
-        if (!$project) {
-            $this->app->abort(404, $this->app->trans('error.404.project'));
+        if ($project === null) {
+            $this->app->abort(404, $this->trans('error.404.project'));
         }
 
-        if (!$environment) {
-            $this->app->abort(404, $this->app->trans('error.404.environment'));
+        if (!($environment !== null && $environment->getProject()->getId() === $project->getId())) {
+            $this->app->abort(404, $this->trans('error.404.environment'));
         }
 
         $repository = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
@@ -129,26 +163,28 @@ class ProjectController extends Controller
             ]);
         }
 
-        $serverDefault = $environment->getServers(1)->first();
-        $server = ($serverDefault ? $serverDefault->getServer(new ServerFactory($this->app->entityManager())) : null);
+        $serverDefault = $this->serverService->getDefault($environment->getId());
+        $serverType = $serverDefault !== null
+            ? $this->serverService->getServerByType($serverDefault->getType(), $serverDefault->getTypeId())
+            : null;
         $lastDeployedRevision = null;
 
-        if ($server) {
-            $deployer = new Deployer(new FilesystemBuilder($repository, $server));
+        if ($serverType) {
+            $deployer = new Deployer(new FilesystemBuilder($repository, $serverType));
             $lastDeployedRevision = $deployer->fetchLastDeployedRevision();
         }
 
         $commits = $repository->getLog(new LogParser())->getCommits();
 
-        $deployUrlPrepared = ($server !== null ? $this->app->url('deploy', [
+        $deployUrlPrepared = ($serverType !== null ? $this->url('deploy', [
             'environmentId' => $environment->getId(),
-            'serverFactoryId' => $serverDefault->getId(),
+            'serverId' => $serverDefault->getId(),
             'commitHash' => 'commitHash',
         ]) : null);
 
-        $markUrlPrepared = ($server !== null ? $this->app->url('mark', [
+        $markUrlPrepared = ($serverType !== null ? $this->url('mark', [
             'environmentId' => $environment->getId(),
-            'serverFactoryId' => $serverDefault->getId(),
+            'serverId' => $serverDefault->getId(),
             'commitHash' => 'commitHash',
         ]) : null);
 
@@ -158,8 +194,8 @@ class ProjectController extends Controller
             'repository' => $repository,
             'commits' => $commits,
             'firstCommit' => current($commits),
-            'serverFactory' => $serverDefault,
-            'server' => $server,
+            'server' => $serverDefault,
+            'serverType' => $serverType,
             'lastDeployedRevision' => $lastDeployedRevision,
             'deployUrlPrepared' => $deployUrlPrepared,
             'markUrlPrepared' => $markUrlPrepared,
@@ -178,8 +214,8 @@ class ProjectController extends Controller
      */
     public function showDiff($environmentId, $commitHashFrom, $commitHashTo)
     {
-        $environmentObj = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
-        $repository = Git::getRepository($this->app->getProjectsDir().$environmentObj->getDirectory());
+        $environment = $this->environmentService->findById((int)$environmentId);
+        $repository = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
         $diff = new Diff($repository, new DiffParser());
 
@@ -194,14 +230,4 @@ class ProjectController extends Controller
         return $this->app->json(['html' => $response->getContent()]);
     }
 
-    /**
-     * @Route("/clone/{projectId}", name="project-clone", requirements={"id"="\d+"})
-     */
-    public function cloneRepository($projectId)
-    {
-        $p = Git::cloneRepository('c:/www/aaaaaaaaaaaaaaaaaaaaa/', 'https://github.com/jasny/bootstrap.git', [], new ProcessConsole());
-        d($p);
-
-        dd($this->request);
-    }
 }

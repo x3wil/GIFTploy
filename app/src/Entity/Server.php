@@ -3,8 +3,6 @@
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 
@@ -12,10 +10,10 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
  * Server
  *
  * @ORM\Table(name="server_factory")
- * @ORM\Entity(repositoryClass="Entity\ServerFactoryRepository")
+ * @ORM\Entity(repositoryClass="Entity\ServerRepository")
  * @ORM\HasLifecycleCallbacks()
  */
-class ServerFactory
+class Server
 {
 
     /**
@@ -51,7 +49,7 @@ class ServerFactory
     /**
      * @var boolean
      *
-     * @ORM\Column(name="default", type="boolean", nullable=true)
+     * @ORM\Column(name="`default`", type="boolean", nullable=true)
      */
     private $default;
 
@@ -68,17 +66,6 @@ class ServerFactory
      * @ORM\Column(name="updated_at", type="datetime", nullable=true)
      */
     private $updatedAt;
-
-    /**
-     * Returns server entity based on type.
-     *
-     * @param \GIFTploy\Filesystem\ServerFactory $factory
-     * @return mixed
-     */
-    public function getServer(\GIFTploy\Filesystem\ServerFactory $factory)
-    {
-        return $factory->create($this->getType(), $this->getTypeId());
-    }
 
     /**
      * @ORM\PreUpdate()
@@ -111,7 +98,7 @@ class ServerFactory
      * Set type
      *
      * @param string $type
-     * @return ServerFactory
+     * @return Server
      */
     public function setType($type)
     {
@@ -134,7 +121,7 @@ class ServerFactory
      * Set typeId
      *
      * @param integer $typeId
-     * @return ServerFactory
+     * @return Server
      */
     public function setTypeId($typeId)
     {
@@ -157,7 +144,7 @@ class ServerFactory
      * Set default
      *
      * @param boolean $default
-     * @return ServerFactory
+     * @return Server
      */
     public function setDefault($default)
     {
@@ -180,7 +167,7 @@ class ServerFactory
      * Set createdAt
      *
      * @param \DateTime $createdAt
-     * @return ServerFactory
+     * @return Server
      */
     public function setCreatedAt($createdAt)
     {
@@ -203,7 +190,7 @@ class ServerFactory
      * Set updatedAt
      *
      * @param \DateTime $updatedAt
-     * @return ServerFactory
+     * @return Server
      */
     public function setUpdatedAt($updatedAt)
     {
@@ -226,7 +213,7 @@ class ServerFactory
      * Set environment
      *
      * @param \Entity\Environment $environment
-     * @return ServerFactory
+     * @return Server
      */
     public function setEnvironment(\Entity\Environment $environment = null)
     {

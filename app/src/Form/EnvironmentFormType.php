@@ -25,13 +25,16 @@ class EnvironmentFormType extends AbstractType
             ]);
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            /** @var \Entity\Environment $environment */
             $environment = $event->getData();
             $form = $event->getForm();
-
-            if (!$environment->isNew()) {
+            
+            if ($environment !== null) {
                 $form->add('branch', null, [
                     'label' => 'form.environment.branch',
-                    'attr' => ['placeholder' => 'form.environment.branch'],
+                    'attr' => [
+                        'placeholder' => 'form.environment.branch',
+                    ],
                     'disabled' => true,
                 ]);
             } else {

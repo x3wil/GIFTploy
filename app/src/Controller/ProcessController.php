@@ -2,13 +2,10 @@
 
 namespace Controller;
 
-use Entity\Environment;
-use Entity\Project;
 use GIFTploy\Deployer\Assembler;
 use Silicone\Route;
 use Silicone\Controller;
 use GIFTploy\Git\Git;
-use GIFTploy\Filesystem\ServerFactory;
 use GIFTploy\ProcessConsole;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,24 +15,40 @@ use Symfony\Component\HttpFoundation\Response;
 class ProcessController extends Controller
 {
 
-    /**
-     * @Route("/deploy/{environmentId}/{serverFactoryId}/{commitHash}", name="deploy", requirements={"environmentId"="\d+", "serverFactoryId"="\d+"})
-     */
-    public function deploy($environmentId, $serverFactoryId, $commitHash)
-    {
-        /* @var \Entity\Environment $environment */
-        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
-        $serverFactory = $this->app->entityManager()
-            ->getRepository(\Entity\ServerFactory::class)
-            ->findOneBy([
-                'id' => $serverFactoryId,
-                'environment' => $environmentId,
-            ]);
+    /** @var \Service\ProjectService */
+    private $projectService;
 
-        $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
+    /** @var \Service\EnvironmentService */
+    private $environmentService;
+
+    /** @var \Service\ServerService */
+    private $serverService;
+
+    public function __construct(\Application $app)
+    {
+        parent::__construct($app);
+
+        $this->projectService = $app['ProjectService'];
+        $this->environmentService = $app['EnvironmentService'];
+        $this->serverService = $app['ServerService'];
+    }
+
+    /**
+     * @Route("/deploy/{environmentId}/{serverId}/{commitHash}", name="deploy", requirements={"environmentId"="\d+", "serverId"="\d+"})
+     */
+    public function deploy($environmentId, $serverId, $commitHash)
+    {
+        $environment = $this->environmentService->findById((int)$environmentId);
+        $server = $this->serverService->findById((int)$serverId);
+
+        if ($server !== null && $server->getEnvironment()->getId() !== $environment->getId()) {
+            $this->app->abort(404, $this->app->trans('error.404.server'));
+        }
+
+        $serverType = $this->serverService->getServerByType($server->getType(), $server->getTypeId());
         $workingTree = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
-        $assembler = new Assembler($environment, $server, $workingTree);
+        $assembler = new Assembler($environment, $serverType, $workingTree);
         $deployer = $assembler->getDeployer();
         $fileStack = $assembler->getDiffFileStack($commitHash);
         $console = new ProcessConsole(ProcessConsole::TYPE_MODAL);
@@ -62,23 +75,21 @@ class ProcessController extends Controller
     }
 
     /**
-     * @Route("/mark/{environmentId}/{serverFactoryId}/{commitHash}", name="mark", requirements={"environmentId"="\d+", "serverFactoryId"="\d+"})
+     * @Route("/mark/{environmentId}/{serverId}/{commitHash}", name="mark", requirements={"environmentId"="\d+", "serverId"="\d+"})
      */
-    public function mark($environmentId, $serverFactoryId, $commitHash)
+    public function mark($environmentId, $serverId, $commitHash)
     {
-        /* @var \Entity\Environment $environment */
-        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
-        $serverFactory = $this->app->entityManager()
-            ->getRepository(\Entity\ServerFactory::class)
-            ->findOneBy([
-                'id' => $serverFactoryId,
-                'environment' => $environmentId,
-            ]);
+        $environment = $this->environmentService->findById((int)$environmentId);
+        $server = $this->serverService->findById((int)$serverId);
 
-        $server = $serverFactory->getServer(new ServerFactory($this->app->entityManager()));
+        if ($server !== null && $server->getEnvironment()->getId() !== $environment->getId()) {
+            $this->app->abort(404, $this->app->trans('error.404.server'));
+        }
+
+        $serverType = $this->serverService->getServerByType($server->getType(), $server->getTypeId());
         $workingTree = Git::getRepository($this->app->getProjectsDir().$environment->getDirectory());
 
-        $assembler = new Assembler($environment, $server, $workingTree);
+        $assembler = new Assembler($environment, $serverType, $workingTree);
         $deployer = $assembler->getDeployer();
 
         $deployer->writeLastDeployedRevision($commitHash);
@@ -94,17 +105,15 @@ class ProcessController extends Controller
      */
     public function cloneRepository($projectId, $environmentId)
     {
-        /** @var \Entity\Project $project */
-        $project = $this->app->entityManager()->getRepository(Project::class)->find(intval($projectId));
-        /** @var \Entity\Environment $environment */
-        $environment = $this->app->entityManager()->getRepository(Environment::class)->find(intval($environmentId));
+        $project = $this->projectService->findById((int)$projectId);
+        $environment = $this->environmentService->findById((int)$environmentId);
 
         if (!$project) {
             $this->app->abort(404, $this->app->trans('error.404.project'));
         }
 
-        if (!$environment) {
-            $this->app->abort(404, $this->app->trans('error.404.environment'));
+        if (!($environment !== null && $environment->getProject()->getId() === $project->getId())) {
+            $this->app->abort(404, $this->trans('error.404.environment'));
         }
 
         $directory = $this->app->getProjectsDir().$environment->getDirectory();

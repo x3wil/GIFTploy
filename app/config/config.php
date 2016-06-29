@@ -4,10 +4,12 @@
 set_time_limit(900);  // 15 minutes
 ini_set('memory_limit', '256M');
 
-$app['settings'] = [
-    'git-binnary' => 'c:\Program Files (x86)\Git\bin\git.exe',
-    'process-timeout' => 3600,
-];
+// Git configuration
+GIFTploy\Git\Git::setOptions([
+    "command" => 'c:\Program Files\Git\bin\git.exe',
+    "environment_variables" => $_SERVER,
+    "process_timeout" => 3600,
+]);
 
 $app['locale'] = 'en';
 
@@ -128,9 +130,12 @@ $app->register(new Silex\Provider\RememberMeServiceProvider());
 $r = new \ReflectionClass('Symfony\Component\Security\Core\SecurityContext');
 $app['translator']->addResource('xliff', dirname($r->getFilename()).'/../Resources/translations/security.'.$app['locale'].'.xlf', $app['locale'], 'security');
 
-// Git configuration
-GIFTploy\Git\Git::setOptions([
-	"command" => $app['settings']['git-binnary'],
-	"environment_variables" => $_SERVER,
-	"process_timeout" => $app['settings']['process-timeout'],
-]);
+$app['ProjectService'] = function ($app) {
+    return new \Service\ProjectService($app['em']);
+};
+$app['EnvironmentService'] = function ($app) {
+    return new \Service\EnvironmentService($app['em']);
+};
+$app['ServerService'] = function ($app) {
+    return new \Service\ServerService($app['em']);
+};

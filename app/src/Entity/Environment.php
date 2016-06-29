@@ -3,8 +3,6 @@
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\Common\Collections\Criteria;
@@ -30,12 +28,11 @@ class Environment
     /**
      * @ORM\ManyToOne(targetEntity="Project", inversedBy="environments")
      * @ORM\JoinColumn(name="repository_id", referencedColumnName="id")
-     * @Assert\NotBlank()
      */
     private $project;
 
     /**
-     * @ORM\OneToMany(targetEntity="ServerFactory", mappedBy="environment")
+     * @ORM\OneToMany(targetEntity="Server", mappedBy="environment")
      */
     private $servers;
 
@@ -102,20 +99,10 @@ class Environment
         $this->servers = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
-    public function __toString()
-    {
-        return $this->getTitle();
-    }
-
-    public function isNew()
-    {
-        return !((bool)$this->getId());
-    }
-
     /**
      * Get id
      *
-     * @return integer 
+     * @return integer
      */
     public function getId()
     {
@@ -154,14 +141,14 @@ class Environment
     public function setBranch($branch)
     {
         $this->branch = $branch;
-    
+
         return $this;
     }
 
     /**
      * Get branch
      *
-     * @return string 
+     * @return string
      */
     public function getBranch()
     {
@@ -177,14 +164,14 @@ class Environment
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
-    
+
         return $this;
     }
 
     /**
      * Get enabled
      *
-     * @return boolean 
+     * @return boolean
      */
     public function getEnabled()
     {
@@ -200,14 +187,14 @@ class Environment
     public function setCreatedAt($createdAt)
     {
         $this->createdAt = $createdAt;
-    
+
         return $this;
     }
 
     /**
      * Get createdAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getCreatedAt()
     {
@@ -223,14 +210,14 @@ class Environment
     public function setUpdatedAt($updatedAt)
     {
         $this->updatedAt = $updatedAt;
-    
+
         return $this;
     }
 
     /**
      * Get updatedAt
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getUpdatedAt()
     {
@@ -246,14 +233,14 @@ class Environment
     public function setProject(\Entity\Project $project = null)
     {
         $this->project = $project;
-    
+
         return $this;
     }
 
     /**
      * Get project
      *
-     * @return \Entity\Project 
+     * @return \Entity\Project
      */
     public function getProject()
     {
@@ -263,10 +250,10 @@ class Environment
     /**
      * Add servers
      *
-     * @param \Entity\ServerFactory $servers
+     * @param \Entity\Server $servers
      * @return Environment
      */
-    public function addServer(\Entity\ServerFactory $servers)
+    public function addServer(\Entity\Server $servers)
     {
         $this->servers[] = $servers;
 
@@ -276,9 +263,9 @@ class Environment
     /**
      * Remove servers
      *
-     * @param \Entity\ServerFactory $servers
+     * @param \Entity\Server $servers
      */
-    public function removeServer(\Entity\ServerFactory $servers)
+    public function removeServer(\Entity\Server $servers)
     {
         $this->servers->removeElement($servers);
     }
@@ -288,15 +275,9 @@ class Environment
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getServers($default = null)
+    public function getServers()
     {
-        $criteria = Criteria::create();
-
-        if ($default !== null) {
-            $criteria->where(Criteria::expr()->eq('default', $default));
-        }
-        
-        return $this->servers->matching($criteria);
+        return $this->servers;
     }
 
     public function getDirectory()
