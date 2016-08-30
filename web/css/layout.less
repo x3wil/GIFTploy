@@ -70,94 +70,97 @@
     }
 }
 
+.content-wrapper {
+    margin-left: 0;
 
-.content {
-    &.header-box {
-        padding-top: 0;
-    }
-
-    .commit-hash {
-        font-family: monospace;
-        /*font-size: 12px;*/
-    }
-
-    .boxOverflow {
-        min-height: 200px;
-        overflow-y: auto;
-        overflow-x: hidden;
-    }
-
-    #commits-list {
-        & > .box {
-            margin-bottom: 0;
+    .content {
+        &.header-box {
+            padding-top: 0;
         }
 
-        table {
-            tr {
-                cursor: pointer;
+        .commit-hash {
+            font-family: monospace;
+            /*font-size: 12px;*/
+        }
 
-                td, th {
-                    padding: 5px 8px;
+        .boxOverflow {
+            min-height: 200px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+
+        #commits-list {
+            & > .box {
+                margin-bottom: 0;
+            }
+
+            table {
+                tr {
+                    cursor: pointer;
+
+                    td, th {
+                        padding: 5px 8px;
+                    }
                 }
             }
         }
-    }
-    
-    &.show-files #commits-list {
-        margin-bottom: 10px;
-    }
 
-    #commit-files {
-        padding-left: 0;
-
-        .nav-tabs-custom {
-            position: relative;
-            margin-bottom: 0;
+        &.show-files #commits-list {
+            margin-bottom: 10px;
         }
 
-        .tab-content {
-            .boxOverflow;
+        #commit-files {
+            padding-left: 0;
 
-            .commit-detail, commit-diff {
-                display: none;
+            .nav-tabs-custom {
+                position: relative;
+                margin-bottom: 0;
+            }
+
+            .tab-content {
+                .boxOverflow;
+
+                .commit-detail, commit-diff {
+                    display: none;
+                }
+            }
+
+            .commit-buttons {
+                position: absolute;
+                right: 4px;
+                top: 4px;
             }
         }
 
-        .commit-buttons {
-            position: absolute;
-            right: 4px;
-            top: 4px;
-        }
-    }
-
-    &.show-files #commit-files {
-        display: block;
-    }
-
-    .diff-files {
-        .lh-box-shadow(none);
-
-        .box-title {
-            font-size: 14px;
+        &.show-files #commit-files {
+            display: block;
         }
 
-        table {
-            tr {
-                td {
-                    padding: 0px 4px;
-                    font-size: 11px;
-                    font-family: monospace;
-                    white-space: pre-wrap;
-                    border: 0px solid;
+        .diff-files {
+            .lh-box-shadow(none);
 
-                    &:first-of-type {
-                        width: 22px;
-                        background-color: #E9E9E9;
-                    }
-                    &:nth-of-type(2) {
-                        width: 22px;
-                        background-color: #E9E9E9;
-                        border-right: 1px solid #D2D6DE;
+            .box-title {
+                font-size: 14px;
+            }
+
+            table {
+                tr {
+                    td {
+                        padding: 0px 4px;
+                        font-size: 11px;
+                        font-family: monospace;
+                        white-space: pre-wrap;
+                        border: 0px solid;
+
+                        &:first-of-type {
+                            width: 22px;
+                            background-color: #E9E9E9;
+                        }
+                        &:nth-of-type(2) {
+                            width: 22px;
+                            background-color: #E9E9E9;
+                            border-right: 1px solid #D2D6DE;
+                        }
                     }
                 }
             }
@@ -173,7 +176,7 @@
 .spinner {
     margin: 50px auto;
     width: 50px;
-    height: 40px;
+    height: 32px;
     text-align: center;
     font-size: 0px;
 
@@ -206,6 +209,12 @@
 .lh-keyframes(~'sk-stretchdelay, 0%, 40%, 100%{ transform: scaleY(0.4); background-color: #333; } 20%{ transform: scaleY(1.0); background-color: #DD4B39; }');
 
 body > .modal {
+    .modal-header {
+        .alert-success {
+            margin-bottom: 0;
+        }
+    }
+
     .modal-body {
         &.console {
             padding: 0;
@@ -249,3 +258,12 @@ body > .modal {
         height: 100%;
     }
 }
+
+.box-widget {
+    .widget-controls {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+    }
+}
+

@@ -148,4 +148,26 @@ class Git
 
         return $process;
     }
+
+    public static function getRemoteBranches($remote)
+    {
+        $process = self::run('ls-remote', ['--heads', $remote]);
+
+        if (!$process->isSuccessful()) {
+            throw new \RuntimeException(sprintf('Error while initializing repository: %s', $process->getErrorOutput()));
+        }
+
+        $branches = [];
+        $output = $process->getOutput();
+
+        foreach (explode("\n", $output) as $line) {
+            preg_match('~^.*\s+(.*)$~i', $line, $matches);
+
+            if (isset($matches[1])) {
+                $branches[] = trim(str_replace('refs/heads/', '', $matches[1]));
+            }
+        }
+
+        return $branches;
+    }
 }

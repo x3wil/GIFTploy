@@ -69,6 +69,8 @@ $app->register(new Silex\Provider\SessionServiceProvider(), array(
     )
 ));
 
+$app->register(new Silex\Provider\HttpFragmentServiceProvider());
+
 // Twig
 $app->register(new Silex\Provider\TwigServiceProvider(), array(
     'twig.options' => array(

@@ -1,9 +1,14 @@
 title: Silicone Skeleton
 
+layout:
+    addEnvironment: Add new environment
+
 form:
     submit: Submit
 
     project:
+        add: New project
+        edit: Edit project
         title: Title
         url: GIT repository URL
         username: Login
@@ -14,8 +19,11 @@ form:
         errorUniqueMessage: Project with this title is already exists.
 
     environment:
+        add: New environment
+        edit: Edit environment
         title: Title
         branch: Branch
+        select: Select branch
         successMessageNew: Environenment has been created.
         successMessageEdit: Environenment has been updated.
         errorMessage: There has been error during saving environment.

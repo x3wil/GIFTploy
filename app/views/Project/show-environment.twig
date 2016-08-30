@@ -44,7 +44,7 @@
 {% block content %}
 
     <div class="row">
-        <div class="col-md-7" id="commits-list" data-environment-id="{{ environment.getId() }}">
+        <div class="col-md-6" id="commits-list" data-environment-id="{{ environment.getId() }}">
             <div class="box">
                 <div class="box-body">
                     <table class="table table-condensed table-hover">
@@ -85,7 +85,7 @@
             </div>
         </div>
 
-        <div class="col-md-5" id="commit-files">
+        <div class="col-md-6" id="commit-files">
             <div class="nav-tabs-custom">
                 <ul class="nav nav-tabs">
                     <li class="active"><a href="#tab-commit-files" data-toggle="tab" id="tab-folder-commit-files">Commit Files</a></li>
@@ -150,11 +150,3 @@
     </div>
 
 {% endblock %}
-
-{#{%- set labelNew = true -%}
-{%- if not labelNew or commit.getCommitHash() == lastDeployedRevision -%}
-    <span class="label label-success">deployed</span>
-    {% set labelNew = false -%}
-{%- else -%}
-    <span class="label label-warning">new</span>
-{%- endif -%}#}

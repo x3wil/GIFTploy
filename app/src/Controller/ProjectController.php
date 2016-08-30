@@ -47,8 +47,14 @@ class ProjectController extends Controller
     {
         $project = $this->projectService->findById((int)$id);
         $editing = ($project !== null);
+        $redirect = null;
 
-        $form = $this->app->formType(new ProjectFormType(), $project);
+        $actionUrl = $editing
+            ? $this->url('project-edit', ['id' => $id])
+            : $this->url('project-new');
+        $form = $this->app->formType(new ProjectFormType(), $project, [
+            'action' => $actionUrl,
+        ]);
 
         if ($this->request->isMethod('POST')) {
             $form->submit($this->request);
@@ -60,14 +66,11 @@ class ProjectController extends Controller
 
                     if ($editing) {
                         $this->successMessage($this->trans('form.project.successMessageEdit'));
-
-                        return $this->app->redirect($this->app->url('project-list'));
                     } else {
                         $this->successMessage($this->trans('form.project.successMessageNew'));
-
-                        return $this->app->redirect($this->app->url('environment-new',
-                            ['projectId' => $project->getId()]));
                     }
+
+                    $redirect = $this->app->url('project-list');
 
                 } catch (\Doctrine\DBAL\Exception\UniqueConstraintViolationException $e) {
                     $form->get('title')->addError(new FormError($this->trans('form.project.errorUniqueMessage')));
@@ -80,11 +83,15 @@ class ProjectController extends Controller
 
         $response = $this->render('Project/project-form.twig', [
             'form' => $form->createView(),
+            'editing' => $editing,
         ]);
 
         $response->setSharedMaxAge(5);
 
-        return $response;
+        return $this->json([
+            'html' => $response->getContent(),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**
@@ -96,12 +103,23 @@ class ProjectController extends Controller
         $project = $this->projectService->findById((int)$projectId);
         $environment = $this->environmentService->findById((int)$id);
         $editing = ($environment !== null);
+        $redirect = null;
 
         if ($environment !== null && $environment->getProject()->getId() !== $project->getId()) {
             $this->app->abort(404, $this->trans('error.404.environment'));
         }
 
-        $form = $this->app->formType(new EnvironmentFormType(), $environment);
+        $actionUrl = $editing
+            ? $this->url('environment-edit', [
+                'id' => $id,
+                'projectId' => $projectId,
+            ])
+            : $this->url('environment-new', [
+                'projectId' => $projectId,
+            ]);
+        $form = $this->app->formType(new EnvironmentFormType($project), $environment, [
+            'action' => $actionUrl,
+        ]);
 
         if ($this->request->isMethod('POST')) {
             $form->submit($this->request);
@@ -118,10 +136,10 @@ class ProjectController extends Controller
                         $this->successMessage($this->trans('form.environment.successMessageNew'));
                     }
 
-                    return $this->app->redirect($this->url('environment-show', [
+                    $redirect = $this->url('environment-show', [
                         'projectId' => $project->getId(),
                         'environmentId' => $environment->getId(),
-                    ]));
+                    ]);
 
                 } catch (\Exception $e) {
                     $this->errorMessage($this->trans('form.environment.errorMessage'));
@@ -131,11 +149,15 @@ class ProjectController extends Controller
 
         $response = $this->render('Project/environment-form.twig', [
             'form' => $form->createView(),
+            'editing' => $editing,
         ]);
 
         $response->setSharedMaxAge(5);
 
-        return $response;
+        return $this->json([
+            'html' => $response->getContent(),
+            'redirect' => $redirect,
+        ]);
     }
 
     /**

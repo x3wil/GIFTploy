@@ -5,20 +5,26 @@
     <div class="row">
 
         {% for project in projects %}
-            <div class="col-md-4">
+            <div class="col-md-3">
                 <div class="box box-widget widget-user-2">
                     <div class="widget-user-header bg-yellow">
                         <div class="widget-user-image">
-                            <img class="img-circle" src="/images/logo-git.png" alt="User Avatar">
+                            <img class="img-circle" src="/images/logo-git.png" alt="">
                         </div>
                         <h3 class="widget-user-username">{{ project.getTitle() }}</h3>
                         <h5 class="widget-user-desc">Project</h5>
+                        <div class="widget-controls">
+                            <a href="{{ url('project-edit', {'id': project.getId}) }}" class="btn btn-default popup"><i class="fa fa-edit"></i></a>
+                        </div>
                     </div>
+
                     <div class="box-footer no-padding">
                         <ul class="nav nav-stacked">
                             {% for environment in project.getEnvironments() %}
                                 <li><a href="{{ url('environment-show', {'projectId': project.getId, 'environmentId': environment.getId()}) }}">{{ environment.getTitle }}</a></li>
                             {% endfor %}
+
+                            <li><a href="{{ url('environment-new', {'projectId': project.getId}) }}" class="popup text-center text-bold"><i class="fa fa-plus"></i> {{ 'layout.addEnvironment'|trans() }}</a></li>
                         </ul>
                     </div>
                 </div>

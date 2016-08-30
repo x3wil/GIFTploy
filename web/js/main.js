@@ -210,8 +210,6 @@ function Ajax()
 		{
 			alert("error");
 		});
-
-		this.abort();
     };
 }
 
@@ -409,7 +407,7 @@ function modal(url, title)
 
     var modalContent = '' +
         '<div class="modal fade" tabindex="-1" role="dialog">' +
-            '<div class="modal-dialog modal-lg">' +
+            '<div class="modal-dialog ' + (isProcess ? 'modal-lg' : '') + '">' +
                 '<div class="modal-content">' +
                     '<div class="modal-body">' + getSpinner()[0].outerHTML + '</div>' +
                 '</div>' +
@@ -432,8 +430,9 @@ function modal(url, title)
 
     return $.ajax({
         url: url,
-        success: function(r) {
-            mo.find('.modal-content').html(r);
+		dataType: (isProcess ? 'html' : 'json'),
+        success: function(response) {
+            mo.find('.modal-content').html(isProcess ? response : response.html);
         },
         error: function() {
             return mo.find('.modal-body').html('Loading failed');
@@ -443,7 +442,7 @@ function modal(url, title)
 
 $(function () {
 
-	$(document).on('click', 'a.console', function (e) {
+	$(document).on('click', 'a.console, a.popup', function (e) {
 		e.preventDefault();
 		var link = $(this);
 		modal(link.attr("href"), link.data("modal-title"));
@@ -458,5 +457,37 @@ $(function () {
 	});
 });
 
+$(function () {
+	$(document).on('submit', 'form.ajax', function (e) {
+		e.preventDefault();
 
+		var $form = $(this);
+		var $submitButton = $('[type=submit]', $form);
+		var $spinner = $('.spinner', $form);
+
+		$spinner.removeClass('hidden');
+		$submitButton.attr('disabled', true);
+
+		$.ajax({
+			type: 'POST',
+			url: $form.attr('action'),
+			data: $form.serialize(),
+			dataType: 'json'
+		}).done(function(response) {
+			$('.modal-dialog').html(response.html);
+
+			var redirect = response.redirect || null;
+
+			if (redirect !== null) {
+				setTimeout(function () {
+					window.location.href = redirect;
+				}, 1500);
+			}
+		}).fail(function () {
+		}).always(function () {
+			$spinner.addClass('hidden');
+			$submitButton.attr('disabled', false);
+		});
+	});
+});
 

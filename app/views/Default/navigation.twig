@@ -1,0 +1,5 @@
+<ul class="nav navbar-nav">
+    {% for item in items %}
+        <li><a href="{{ item.url }}" class="{{ item.class }}"><i class="fa fa-{{ item.icon }}"></i> <span>{{ item.name }}</span></a></li>
+    {% endfor %}
+</ul>
